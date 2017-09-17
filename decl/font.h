@@ -38,20 +38,22 @@ public:
 	void Open(const std::string& filename, uint32 size)
 	{
 		Close();
-		font=TTF_OpenFont(filename.c_str(), size);
-		Error::IfZero(font);
+		font=Error::IfZero(TTF_OpenFont(filename.c_str(), size));
 	}
 	void Open(const std::string& filename, uint32 size, uint32 index)
 	{
 		Close();
-		font=TTF_OpenFontIndex(filename.c_str(), size, index);
-		Error::IfZero(font);
+		font=Error::IfZero(TTF_OpenFontIndex(filename.c_str(), size, index));
 	}
 	bool IsOpened()const
 	{
 		return font;
 	}
 	Font()=default;
+	~Font()
+	{
+		Close();
+	}
 	Font(const std::string& filename, uint32 size)
 	{
 		Open(filename, size);
@@ -198,7 +200,7 @@ public:
 	std::string GetFamilyName()
 	{
 		ErrorIfNotOpened();
-		const char* x=TTF_FontFaceFamilyName(font);
+		auto x=TTF_FontFaceFamilyName(font);
 		return x?x:"";
 	}
 	bool IsStyleNameAvailable()
@@ -209,7 +211,7 @@ public:
 	std::string GetStyleName()
 	{
 		ErrorIfNotOpened();
-		const char* x=TTF_FontFaceStyleName(font);
+		auto x=TTF_FontFaceStyleName(font);
 		return x?x:"";
 	}
 	uint32 GlyphIndex(char16_t character)
@@ -217,32 +219,18 @@ public:
 		ErrorIfNotOpened();
 		return TTF_GlyphIsProvided(font, character);
 	}
-	uint32 GlyphMinX(char16_t character)
+	Point GlyphMin(char16_t character)
 	{
 		ErrorIfNotOpened();
-		int result;
-		Error::IfNegative(TTF_GlyphMetrics(font, character, &result, nullptr, nullptr, nullptr, nullptr));
+		Point result;
+		Error::IfNegative(TTF_GlyphMetrics(font, character, &result.x, nullptr, &result.y, nullptr, nullptr));
 		return result;
 	}
-	uint32 GlyphMinY(char16_t character)
+	Point GlyphMax(char16_t character)
 	{
 		ErrorIfNotOpened();
-		int result;
-		Error::IfNegative(TTF_GlyphMetrics(font, character, nullptr, nullptr, &result, nullptr, nullptr));
-		return result;
-	}
-	uint32 GlyphMaxX(char16_t character)
-	{
-		ErrorIfNotOpened();
-		int result;
-		Error::IfNegative(TTF_GlyphMetrics(font, character, nullptr, &result, nullptr, nullptr, nullptr));
-		return result;
-	}
-	uint32 GlyphMaxY(char16_t character)
-	{
-		ErrorIfNotOpened();
-		int result;
-		Error::IfNegative(TTF_GlyphMetrics(font, character, nullptr, nullptr, nullptr, &result, nullptr));
+		Point result;
+		Error::IfNegative(TTF_GlyphMetrics(font, character, nullptr, &result.x, nullptr, &result.y, nullptr));
 		return result;
 	}
 	uint32 GlyphAdvance(char16_t character)
@@ -252,15 +240,9 @@ public:
 		Error::IfNegative(TTF_GlyphMetrics(font, character, nullptr, nullptr, nullptr, nullptr, &result));
 		return result;
 	}
-	uint32 GlyphWidth(char16_t character)
+	Point TextSize(char16_t character)
 	{
-		ErrorIfNotOpened();
-		return GlyphMaxX(character)-GlyphMinX(character);
-	}
-	uint32 GlyphHeight(char16_t character)
-	{
-		ErrorIfNotOpened();
-		return GlyphMaxY(character)-GlyphMinY(character);
+		return GlyphMax(character)-GlyphMin(character);
 	}
 	Point TextSize(const std::string& text)
 	{
@@ -276,11 +258,6 @@ public:
 		Error::IfNegative(TTF_SizeUNICODE(font, reinterpret_cast<const uint16*>(text.c_str()), &result.x, &result.y));
 		return result;
 	}
-	Point TextSize(char16_t character)
-	{
-		ErrorIfNotOpened();
-		return Point(GlyphWidth(character), GlyphHeight(character));
-	}
 };
 Font::Style operator|(Font::Style first, Font::Style second)noexcept
 {
@@ -294,15 +271,15 @@ Font::Style operator^(Font::Style first, Font::Style second)noexcept
 {
 	return Font::Style(uint32(first)^uint32(second));
 }
-Font::Style operator|=(Font::Style& first, Font::Style second)noexcept
+Font::Style& operator|=(Font::Style& first, Font::Style second)noexcept
 {
 	return first=(first|second);
 }
-Font::Style operator&=(Font::Style& first, Font::Style second)noexcept
+Font::Style& operator&=(Font::Style& first, Font::Style second)noexcept
 {
 	return first=(first&second);
 }
-Font::Style operator^=(Font::Style& first, Font::Style second)noexcept
+Font::Style& operator^=(Font::Style& first, Font::Style second)noexcept
 {
 	return first=(first^second);
 }
