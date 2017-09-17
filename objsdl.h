@@ -9,11 +9,11 @@
 #include <thread>
 #include <vector>
 
-#include "func.h"
-#include "geometry.h"
-#include "colors.h"
-#include "types.h"
-#include "nocopy.h"
+#include "../mylibraries/func.h"
+#include "../mylibraries/geometry.h"
+#include "../mylibraries/colors.h"
+#include "../mylibraries/types.h"
+#include "../mylibraries/nocopy.h"
 
 #include "oldsdl.h"
 
