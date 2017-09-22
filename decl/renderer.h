@@ -337,10 +337,12 @@ public:
 	{
         return bool(SDL_RenderTargetSupported(renderer));
 	}
-	void ReadPixels(Surface& out, Point from=Point(0,0))
+	Surface ReadPixels(Rect from, Pixel::Format format)
 	{
-		SDL_Rect limit{from.x,from.y, int(out.Width()), int(out.Height())};
-        Error::IfNegative(SDL_RenderReadPixels(renderer, &limit, uint32(out.GetFormat()), out.surface->pixels, out.BytesPerLine()));
+		Surface out(from.Size(), Pixel::BitSize(format), format);
+		SDL_Rect limit=from;
+        Error::IfNegative(SDL_RenderReadPixels(renderer, &limit, uint32(format), out.surface->pixels, out.BytesPerLine()));
+        return (Surface&&)out;
 	}
 };
 //Bitwise operators for Renderer enums---------------------
