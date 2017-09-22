@@ -339,7 +339,7 @@ public:
 	}
 	Surface ReadPixels(Rect from, Pixel::Format format)
 	{
-		Surface out(from.Size(), Pixel::BitSize(format), format);
+		Surface out(from.Size(), format);
 		SDL_Rect limit=from;
         Error::IfNegative(SDL_RenderReadPixels(renderer, &limit, uint32(format), out.surface->pixels, out.BytesPerLine()));
         return (Surface&&)out;

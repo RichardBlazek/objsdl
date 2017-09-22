@@ -1,33 +1,33 @@
 #pragma once
 
-Surface::Surface(Point size, uint8 depth, const std::vector<Color>& colors)
+Surface::Surface(Point size, const std::vector<Color>& colors, uint8 depth)
 {
-	Create(size, depth, colors);
+	Create(size, colors, depth);
 }
-Surface::Surface(Point size, uint8 depth, const std::vector<Color>& colors, Pixel::Format format)
+Surface::Surface(Point size, const std::vector<Color>& colors, Pixel::Format format)
 {
-	Create(size, depth, colors, format);
+	Create(size, colors, format);
 }
 Surface::Surface(Point size, uint8 depth, Masks masks)
 {
 	Create(size, depth, masks);
 }
-Surface::Surface(Point size, uint8 depth, Pixel::Format format)
+Surface::Surface(Point size, Pixel::Format format)
 {
-	Create(size, depth, format);
+	Create(size, format);
 }
 
-void Surface::Create(Point size, uint8 depth, const std::vector<Color>& colors)
+void Surface::Create(Point size, const std::vector<Color>& colors, uint8 depth)
 {
     Destroy();
     surface=SDL_CreateRGBSurface(0,size.x,size.y,depth, 0, 0, 0, 0);
 	Error::IfZero(surface);
 	SetPalette(colors);
 }
-void Surface::Create(Point size, uint8 depth, const std::vector<Color>& colors, Pixel::Format format)
+void Surface::Create(Point size, const std::vector<Color>& colors, Pixel::Format format)
 {
 	Destroy();
-    surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y,depth, uint32(format));
+    surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format));
 	Error::IfZero(surface);
 	SetPalette(colors);
 }
@@ -37,10 +37,10 @@ void Surface::Create(Point size, uint8 depth, Masks masks)
     surface=SDL_CreateRGBSurface(0,size.x,size.y,depth, BE_ToNative(masks.r), BE_ToNative(masks.g), BE_ToNative(masks.b), BE_ToNative(masks.a));
 	Error::IfZero(surface);
 }
-void Surface::Create(Point size, uint8 depth, Pixel::Format format)
+void Surface::Create(Point size, Pixel::Format format)
 {
     Destroy();
-    surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y,depth, uint32(format));
+    surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format));
 	Error::IfZero(surface);
 }
 void Surface::Blit(Surface& second, const Rect* source, const Rect* destination)
