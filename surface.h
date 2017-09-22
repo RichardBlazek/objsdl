@@ -45,13 +45,13 @@ void Surface::Create(Point size, uint8 depth, Pixel::Format format)
 }
 void Surface::Blit(Surface& second, const Rect* source, const Rect* destination)
 {
-	SDL_Rect r1=source?*source:Rect(), r2=destination?*destination:Rect();
-    Error::Condition(SDL_BlitSurface(surface, source?&r1:nullptr, second.surface, destination?&r2:nullptr)<0);
+	SDL_Rect src=source?*source:Rect(), dst=destination?*destination:Rect();
+    Error::Condition(SDL_BlitSurface(second.surface, source?&src:nullptr, surface, destination?&dst:nullptr)<0);
 }
 void Surface::Draw(Surface& second, const Rect* source, const Rect* destination)
 {
-	SDL_Rect r1=source?*source:Rect(), r2=destination?*destination:Rect();
-    Error::Condition(SDL_BlitScaled(surface, source?&r1:nullptr, second.surface, destination?&r2:nullptr)<0);
+	SDL_Rect src=source?*source:Rect(), dst=destination?*destination:Rect();
+    Error::Condition(SDL_BlitScaled(second.surface, source?&src:nullptr, surface, destination?&dst:nullptr)<0);
 }
 void Surface::EnableColorKey(const Color& col)
 {
