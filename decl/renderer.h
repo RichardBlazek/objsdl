@@ -128,22 +128,15 @@ public:
 		Error::IfNegative(SDL_RenderClear(renderer));
 	}
 	///Draw image to Renderer
-	void Draw(Texture& texture);
-	void Draw(Texture& texture, std::nullptr_t, const Rect& destination);
-	void Draw(Texture& texture, const Rect& source, std::nullptr_t);
-	void Draw(Texture& texture, const Rect& source, const Rect& destination);
-
-	void Draw(Surface& surface);
-	void Draw(Surface& surface, std::nullptr_t, const Rect& destination);
-	void Draw(Surface& surface, const Rect& source, std::nullptr_t);
-	void Draw(Surface& surface, const Rect& source, const Rect& destination);
+	void Draw(Texture& texture, Rect source, Rect destination);
+	void Draw(Surface& surface, Rect source, Rect destination);
 
 
-	void Draw(Texture& texture, const Rect* source, const Rect* destination, double angle, Point center, Flip flip);
-	void Draw(Surface& surface, const Rect* source, const Rect* destination, double angle, Point center, Flip flip);
+	void Draw(Texture& texture, Rect source, Rect destination, double angle, Point center, Flip flip);
+	void Draw(Surface& surface, Rect source, Rect destination, double angle, Point center, Flip flip);
 
-	void Draw(Texture& texture, const Rect* source, const Rect* destination, double angle, Flip flip);
-	void Draw(Surface& surface, const Rect* source, const Rect* destination, double angle, Flip flip);
+	void Draw(Texture& texture, Rect source, Rect destination, double angle, Flip flip);
+	void Draw(Surface& surface, Rect source, Rect destination, double angle, Flip flip);
 
 	//Text drawing---------------------------------------------------
 	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Point dst)
@@ -315,7 +308,7 @@ public:
 		SDL_RenderGetScale(renderer, &result.x, &result.y);
 		return result;
 	}
-	Point GetOutputSize()
+	Point Size()
 	{
 		Point result;
 		Error::IfNegative(SDL_GetRendererOutputSize(renderer, &result.x, &result.y));
@@ -323,9 +316,7 @@ public:
 	}
 	static uint32 CountOfDrivers()
 	{
-		int x=SDL_GetNumRenderDrivers();
-		Error::IfNegative(x);
-		return x;
+		return Error::IfNegative(SDL_GetNumRenderDrivers());
 	}
 	Info GetInfo()
 	{
