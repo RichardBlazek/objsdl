@@ -4,13 +4,11 @@ namespace Clipboard
 {
     void SetText(const std::string& text)
     {
-    	Error::Condition(SDL_SetClipboardText(text.c_str())<0);
+    	Error::IfNegative(SDL_SetClipboardText(text.c_str()));
     }
     std::string GetText()
     {
-    	const char* txt=SDL_GetClipboardText();
-		Error::IfZero(txt);
-		return txt;
+		return Error::IfZero(SDL_GetClipboardText());
     }
     bool HasText()
     {
