@@ -43,31 +43,31 @@ void Surface::Create(Point size, Pixel::Format format)
     surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format));
 	Error::IfZero(surface);
 }
-void Surface::Blit(Surface& second, const Rect* source, const Rect* destination)
+void Surface::Blit(Surface& second, Rect source, Rect destination)
 {
-	SDL_Rect src=source?*source:Rect(), dst=destination?*destination:Rect();
-    Error::Condition(SDL_BlitSurface(second.surface, source?&src:nullptr, surface, destination?&dst:nullptr)<0);
+	SDL_Rect src=source, dst=destination;
+    Error::IfNegative(SDL_BlitSurface(second.surface, &src, surface, &dst));
 }
-void Surface::Draw(Surface& second, const Rect* source, const Rect* destination)
+void Surface::Draw(Surface& second, Rect source, Rect destination)
 {
-	SDL_Rect src=source?*source:Rect(), dst=destination?*destination:Rect();
-    Error::Condition(SDL_BlitScaled(second.surface, source?&src:nullptr, surface, destination?&dst:nullptr)<0);
+	SDL_Rect src=source, dst=destination;
+    Error::IfNegative(SDL_BlitScaled(second.surface, &src, surface, &dst));
 }
 void Surface::EnableColorKey(const Color& col)
 {
-	Error::Condition(SDL_SetColorKey(surface, true, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a))<0);
+	Error::IfNegative(SDL_SetColorKey(surface, true, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a)));
 }
 void Surface::DisableColorKey(const Color& col)
 {
-	Error::Condition(SDL_SetColorKey(surface, false, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a))<0);
+	Error::IfNegative(SDL_SetColorKey(surface, false, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a)));
 }
 void Surface::SetRGBMod(const ColorRGB& col)
 {
-	Error::Condition(SDL_SetSurfaceColorMod(surface, col.r, col.g, col.b)<0);
+	Error::IfNegative(SDL_SetSurfaceColorMod(surface, col.r, col.g, col.b));
 }
 void Surface::SetAlphaMod(uint8 alpha)
 {
-	Error::Condition(SDL_SetSurfaceAlphaMod(surface, alpha)<0);
+	Error::IfNegative(SDL_SetSurfaceAlphaMod(surface, alpha));
 }
 void Surface::SetRGBAMod(const Color& col)
 {
@@ -165,22 +165,10 @@ void Surface::Draw(const Line& line, const Color& col)
 }
 void Surface::DrawBorder(const Rect& rect, const Color& col)
 {
-	for(int i=rect.x, limit=rect.x+rect.w; i<limit;++i)
-	{
-		Draw(Point(i,rect.y), col);
-	}
-	for(int i=rect.x, limit=rect.x+rect.w; i<limit;++i)
-	{
-		Draw(Point(i,rect.y+rect.h), col);
-	}
-	for(int i=rect.y, limit=rect.y+rect.h; i<limit;++i)
-	{
-		Draw(Point(rect.x, i), col);
-	}
-	for(int i=rect.y, limit=rect.y+rect.h; i<limit;++i)
-	{
-		Draw(Point(rect.x+rect.w, i), col);
-	}
+	Draw(SDL::Rect(rect.x, rect.y, 1, rect.h), col);
+	Draw(SDL::Rect(rect.Right(), rect.y, 1, rect.h), col);
+	Draw(SDL::Rect(rect.x, rect.y, rect.w, 1), col);
+	Draw(SDL::Rect(rect.x, rect.Down(), rect.w, 1), col);
 }
 void Surface::Draw(const Rect& rect, const Color& col)
 {
