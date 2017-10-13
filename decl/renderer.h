@@ -143,55 +143,55 @@ public:
 	{
 		Surface textimage=font.Render(u8text, textcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst)
 	{
 		Surface textimage=font.Render(u16text, textcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void Draw(Font& font, char16_t character, const Color& textcolor, Point dst)
 	{
 		Surface textimage=font.Render(character, textcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Point dst, const Color& backgroundcolor)
 	{
 		Surface textimage=font.Render(u8text, textcolor, backgroundcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst, const Color& backgroundcolor)
 	{
 		Surface textimage=font.Render(u16text, textcolor, backgroundcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void Draw(Font& font, char16_t character, const Color& textcolor, Point dst, const Color& backgroundcolor)
 	{
 		Surface textimage=font.Render(character, textcolor, backgroundcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void DrawFast(Font& font, const std::string& u8text, const Color& textcolor, Point dst)
 	{
 		Surface textimage=font.RenderFast(u8text, textcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void DrawFast(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst)
 	{
 		Surface textimage=font.RenderFast(u16text, textcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	void DrawFast(Font& font, char16_t character, const Color& textcolor, Point dst)
 	{
 		Surface textimage=font.RenderFast(character, textcolor);
 		Rect destination(dst, textimage.Size());
-		Draw(textimage, nullptr, destination);
+		Draw(textimage, textimage.Size(), destination);
 	}
 	///Centred text-----------------------------------------------------------------------------------------------
 	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Rect dst)

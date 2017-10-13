@@ -225,8 +225,8 @@ public:
 		SDL_Rect rect=rectangle;
 		return SDL_GetClipRect(surface, &rect);
 	}
-    void Blit(Surface&, const Rect*,const Rect*);
-    void Draw(Surface&, const Rect*,const Rect*);
+    void Blit(Surface&, Rect, Rect);
+    void Draw(Surface&, Rect, Rect);
     void EnableColorKey(const Color& col);
     void DisableColorKey(const Color& col);
     void SetRGBMod(const ColorRGB& col);
