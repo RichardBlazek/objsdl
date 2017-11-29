@@ -336,7 +336,7 @@ public:
         return (Surface&&)out;
 	}
 };
-//Bitwise operators for Renderer enums---------------------
+
 Renderer::Type operator|(Renderer::Type a, Renderer::Type b)
 {
 	return Renderer::Type(uint32(a)|uint32(b));

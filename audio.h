@@ -1,6 +1,5 @@
 #pragma once
 
-//Třída uchovává formát pro přehrávání zvuku a zvuková data
 class Audio
 {
 public:
@@ -10,8 +9,8 @@ public:
 private:
 	SDL_AudioSpec data;
 public:
-	using CallbackType=void(*)(void*,uint8*,int);
-	//Konstruktory
+	using CallbackType=void(*)(void*, uint8*, int);
+
 	Audio(int frequency, Format fmt, uint8 channels, uint16 samples, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
 	{
 		data.freq=frequency;
@@ -21,7 +20,7 @@ public:
 		data.callback=callback;
 		data.userdata=userdata;
 	}
-	//Přístup k atributům
+
 	void SetFrequency(int frequency)noexcept
 	{
 		data.freq=frequency;
@@ -72,15 +71,14 @@ public:
 	{
 		return data.samples;
 	}
-	//Povolené změny formátu při vytváření AudioDevice
+
 	enum class AllowedChanges
 	{
 		None=0, Frequency=SDL_AUDIO_ALLOW_FREQUENCY_CHANGE, Format=SDL_AUDIO_ALLOW_FORMAT_CHANGE,
 		Channels=SDL_AUDIO_ALLOW_CHANNELS_CHANGE, Any=SDL_AUDIO_ALLOW_ANY_CHANGE
 	};
-	//Načtení ze zvukového souboru
 	std::tuple<Audio, WAVBuffer> LoadWAV(const std::string& file);
-	//Konverze zvukových formátů
+
 	void Convert(int freq, Format fmt, uint8 channels, const uint8* src, uint8* dst, size_t len)const
 	{
 		SDL_AudioCVT cvt;
@@ -96,7 +94,7 @@ public:
 	{
 		Convert(freq, fmt, channels, data, data, len);
 	}
-	//Zvukové ovladače
+
 	static uint32 CountOfDrivers()
 	{
 		return SDL_GetNumAudioDrivers();
@@ -130,7 +128,7 @@ std::tuple<Audio, Audio::WAVBuffer> Audio::LoadWAV(const std::string& file)
 	result.data=*tmp;
 	return std::make_tuple(result, WAVBuffer(tmp_buf,tmp_len));
 }
-//Bitové operátory
+
 Audio::AllowedChanges operator~(Audio::AllowedChanges param)noexcept
 {
 	return Audio::AllowedChanges(~int(param));
