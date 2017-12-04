@@ -17,6 +17,7 @@ class Window;
 #include "decl\rect.h"
 #include "decl\messagebox.h"
 #include "decl\window.h"
+#include "decl\drawbaseclass.h"
 #include "decl\surface.h"
 #include "decl\font.h"
 #include "decl\renderer.h"

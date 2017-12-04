@@ -1,7 +1,7 @@
 #pragma once
 
 ///Object Renderer
-class Renderer: public NonCopyable
+class Renderer: public NonCopyable, public DrawBaseClass
 {
 private:
 	SDL_Renderer* renderer=nullptr;
@@ -109,19 +109,6 @@ public:
 		SDL_Rect rect=rectangle;
 		Error::IfNegative(SDL_RenderFillRect(renderer, &rect));
 	}
-	void DrawBorder(const Circle& circle, const Color& color)
-	{
-		Point pos=circle.center;
-		float angle=0;
-		float angle_stepsize=0.001;
-		while(angle<2*pi)
-		{
-			pos.x=circle.center.x+circle.radius*SDL_cos(angle);
-			pos.y=circle.center.y+circle.radius*SDL_sin(angle);
-			Draw(pos, color);
-			angle+=angle_stepsize;
-		}
-	}
 	void Repaint(const Color& col)
 	{
 		SetDrawColor(col);
@@ -138,98 +125,6 @@ public:
 	void Draw(Texture& texture, Rect source, Rect destination, double angle, Flip flip);
 	void Draw(Surface& surface, Rect source, Rect destination, double angle, Flip flip);
 
-	//Text drawing---------------------------------------------------
-	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Point dst)
-	{
-		Surface textimage=font.Render(u8text, textcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst)
-	{
-		Surface textimage=font.Render(u16text, textcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void Draw(Font& font, char16_t character, const Color& textcolor, Point dst)
-	{
-		Surface textimage=font.Render(character, textcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Point dst, const Color& backgroundcolor)
-	{
-		Surface textimage=font.Render(u8text, textcolor, backgroundcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst, const Color& backgroundcolor)
-	{
-		Surface textimage=font.Render(u16text, textcolor, backgroundcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void Draw(Font& font, char16_t character, const Color& textcolor, Point dst, const Color& backgroundcolor)
-	{
-		Surface textimage=font.Render(character, textcolor, backgroundcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void DrawFast(Font& font, const std::string& u8text, const Color& textcolor, Point dst)
-	{
-		Surface textimage=font.RenderFast(u8text, textcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void DrawFast(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst)
-	{
-		Surface textimage=font.RenderFast(u16text, textcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	void DrawFast(Font& font, char16_t character, const Color& textcolor, Point dst)
-	{
-		Surface textimage=font.RenderFast(character, textcolor);
-		Rect destination(dst, textimage.Size());
-		Draw(textimage, textimage.Size(), destination);
-	}
-	///Centred text-----------------------------------------------------------------------------------------------
-	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Rect dst)
-	{
-		Draw(font, u8text, textcolor, dst.Center()-font.TextSize(u8text)/2);
-	}
-	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Rect dst)
-	{
-		Draw(font, u16text, textcolor, dst.Center()-font.TextSize(u16text)/2);
-	}
-	void Draw(Font& font, char16_t character, const Color& textcolor, Rect dst)
-	{
-		Draw(font, character, textcolor, dst.Center()-font.TextSize(character)/2);
-	}
-	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Rect dst, const Color& backgroundcolor)
-	{
-		Draw(font, u8text, textcolor, dst.Center()-font.TextSize(u8text)/2, backgroundcolor);
-	}
-	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Rect dst, const Color& backgroundcolor)
-	{
-		Draw(font, u16text, textcolor, dst.Center()-font.TextSize(u16text)/2, backgroundcolor);
-	}
-	void Draw(Font& font, char16_t character, const Color& textcolor, Rect dst, const Color& backgroundcolor)
-	{
-		Draw(font, character, textcolor, dst.Center()-font.TextSize(character)/2, backgroundcolor);
-	}
-	void DrawFast(Font& font, const std::string& u8text, const Color& textcolor, Rect dst)
-	{
-		Draw(font, u8text, textcolor, dst.Center()-font.TextSize(u8text)/2);
-	}
-	void DrawFast(Font& font, const std::u16string& u16text, const Color& textcolor, Rect dst)
-	{
-		Draw(font, u16text, textcolor, dst.Center()-font.TextSize(u16text)/2);
-	}
-	void DrawFast(Font& font, char16_t character, const Color& textcolor, Rect dst)
-	{
-		Draw(font, character, textcolor, dst.Center()-font.TextSize(character)/2);
-	}
 	//Other----------------------------------------------------------
 	void Show()noexcept
 	{

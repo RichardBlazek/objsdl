@@ -8,7 +8,7 @@ enum class BlendMode
     Mod=SDL_BLENDMODE_MOD
 };
 
-class Surface
+class Surface: public DrawBaseClass
 {
 private:
 	friend Window;
@@ -110,7 +110,7 @@ public:
 			surface->format->palette->colors[i]=ColorSDL(colors[i]);
 		}
 	}
-    Masks GetMasks()const
+    Masks GetMasks()const noexcept
 	{
 		return Masks{surface->format->Rmask, surface->format->Gmask, surface->format->Bmask, surface->format->Amask};
 	}
@@ -192,6 +192,8 @@ public:
 		return result;
 	}
 	void Repaint(const Color& col);
+	using DrawBaseClass::Draw;
+	using DrawBaseClass::DrawBorder;
 	void Draw(const Point& xy, const Color& col)
 	{
 		SetPixelRawValue(xy, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a));
@@ -248,26 +250,4 @@ public:
 		result.surface=SDL_ConvertSurfaceFormat(surface,uint32(desired),0);
 		return result;
 	}
-	void DrawBorder(const Circle& circle, const Color& color)
-	{
-		Point pos=circle.center;
-		float angle=0;
-		float angle_stepsize=0.001;
-		while(angle<2*pi)
-		{
-			pos.x=circle.center.x+circle.radius*SDL_cos(angle);
-			pos.y=circle.center.y+circle.radius*SDL_sin(angle);
-			Draw(pos, color);
-			angle+=angle_stepsize;
-		}
-	}
-	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Point dst);
-	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst);
-	void Draw(Font& font, char16_t character, const Color& textcolor, Point dst);
-	void Draw(Font& font, const std::string& u8text, const Color& textcolor, Point dst, const Color& backgroundcolor);
-	void Draw(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst, const Color& backgroundcolor);
-	void Draw(Font& font, char16_t character, const Color& textcolor, Point dst, const Color& backgroundcolor);
-	void DrawFast(Font& font, const std::string& u8text, const Color& textcolor, Point dst);
-	void DrawFast(Font& font, const std::u16string& u16text, const Color& textcolor, Point dst);
-	void DrawFast(Font& font, char16_t character, const Color& textcolor, Point dst);
 };

@@ -4,16 +4,16 @@ class Tone
 {
 private:
 	constexpr static double Ratio=pow(2, 1.0/12);
-    uint32 freq;
+    uint32 freq=1;
 public:
-	Tone()=default;
-	Tone(uint32 len):lenght(len) {}
+	constexpr Tone()=default;
+	constexpr Tone(uint32 frequency):freq(frequency) {}
 
-	uint32 Frequency()const
+	constexpr uint32 Frequency()const
 	{
-		return lenght;
+		return freq;
 	}
-	void SetFrequency(uint32 f)
+	constexpr void SetFrequency(uint32 f)
 	{
 		freq=f;
 	}
