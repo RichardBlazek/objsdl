@@ -3,21 +3,7 @@
 ///Object Renderer
 class Renderer: public NonCopyable, public DrawBaseClass
 {
-private:
-	SDL_Renderer* renderer=nullptr;
-	///Set Draw Color of Renderer
-	void SetDrawColor(const Color& col)
-	{
-		Error::IfNegative(SDL_SetRenderDrawColor(renderer,col.r,col.g,col.b,col.a));
-	}
 public:
-	//Types----------------------------------------------------------
-	enum class Flip
-	{
-		None=SDL_FLIP_NONE,
-		Horizontal=SDL_FLIP_HORIZONTAL,
-		Vertical=SDL_FLIP_VERTICAL
-	};
 	enum class Type : uint32
 	{
 		None=0x0,
@@ -25,6 +11,25 @@ public:
 		Accelerated=SDL_RENDERER_ACCELERATED,
 		PresentVSync=SDL_RENDERER_PRESENTVSYNC,
 		TargetTexture=SDL_RENDERER_TARGETTEXTURE
+	};
+private:
+	SDL_Renderer* renderer=nullptr;
+
+	void SetDrawColor(const Color& col)
+	{
+		Error::IfNegative(SDL_SetRenderDrawColor(renderer,col.r,col.g,col.b,col.a));
+	}
+
+	void Create(const Window& window, Type flags, int index);
+public:
+	friend Texture;
+	friend Window;
+	//Types----------------------------------------------------------
+	enum class Flip
+	{
+		None=SDL_FLIP_NONE,
+		Horizontal=SDL_FLIP_HORIZONTAL,
+		Vertical=SDL_FLIP_VERTICAL
 	};
 	struct Info
 	{
@@ -44,7 +49,6 @@ public:
 			}
 		}
 	};
-	friend Texture;
 
 	Renderer()=default;
 	Renderer(Renderer&& init):renderer(init.renderer)
@@ -58,11 +62,6 @@ public:
 		return *this;
 	}
 
-	Renderer(const Window& window, Type flags=Type::None, int index=-1)
-		:renderer(SDL_CreateRenderer(window.window, index, uint32(flags)))
-	{
-		Error::IfZero(renderer);
-	}
 	Renderer(Surface& surf)
 		:renderer(SDL_CreateSoftwareRenderer(surf.surface))
 	{
@@ -82,9 +81,6 @@ public:
 	{
 		Destroy();
 	}
-	//If was Renderer destroyed, this function create them again
-	//If not, function destroy the renderer and create them again
-	void Create(const Window& window, Type flags=Type::None, int index=-1);
 
 	//Drawing--------------------------------------------------------
 	void Draw(const Point& point, const Color& col)
