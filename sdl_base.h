@@ -38,20 +38,26 @@ public:
     }
     void Show()const;
 };
-void Init()
+
+class Init
 {
-	constexpr auto sdl_flags=SDL_INIT_EVERYTHING;
-	constexpr auto img_flags=IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF|IMG_INIT_WEBP;
-	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-	Error::IfNegative(SDL_Init(sdl_flags));
-	Error::Condition((IMG_Init(img_flags)&img_flags)!=img_flags);
-	Error::IfNegative(TTF_Init());
-	atexit([](){
+public:
+	Init()
+	{
+		constexpr auto sdl_flags=SDL_INIT_EVERYTHING;
+		constexpr auto img_flags=IMG_INIT_JPG|IMG_INIT_PNG|IMG_INIT_TIF|IMG_INIT_WEBP;
+		SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+		Error::IfNegative(SDL_Init(sdl_flags));
+		Error::Condition((IMG_Init(img_flags)&img_flags)!=img_flags);
+		Error::IfNegative(TTF_Init());
+	}
+	~Init()
+	{
 		TTF_Quit();
 		IMG_Quit();
 		SDL_Quit();
-	});
-}
+	}
+};
 
 constexpr bool IsBigEndian=(SDL_BYTEORDER==SDL_BIG_ENDIAN);
 

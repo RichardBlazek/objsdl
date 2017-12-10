@@ -1,6 +1,5 @@
 #pragma once
 
-//Forward declarations
 class Cursor;
 class DrawBaseClass;
 class Error;
@@ -8,14 +7,13 @@ class Event;
 class Font;
 class Joystick;
 class Renderer;
-class Rect;
 class Surface;
 class Texture;
 class Display;
 class Window;
 
-#include "decl\rect.h"
 #include "decl\messagebox.h"
+#include "decl\textinput.h"
 #include "decl\drawbaseclass.h"
 #include "decl\surface.h"
 #include "decl\renderer.h"
