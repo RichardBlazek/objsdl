@@ -11,11 +11,13 @@ enum class BlendMode
 class Surface: public DrawBaseClass
 {
 private:
+	friend DrawBaseClass;
 	friend Window;
 	friend Texture;
 	friend Renderer;
 	friend Cursor;
 	friend Font;
+	friend void TextInput::SetCandidateListArea(const Rect& area);
     SDL_Surface* surface=nullptr;
     static inline uint32 BE_ToNative(uint32 num)
 	{
@@ -29,6 +31,14 @@ private:
 	static Color ColorSDL(const SDL_Color& col)
 	{
 		return Color(col.r, col.g, col.b, col.a);
+	}
+	static SDL_Rect RectSDL(const Rect& r)
+	{
+		return SDL_Rect{r.x, r.y, int32(r.w), int32(r.h)};
+	}
+	static Rect RectSDL(const SDL_Rect& r)
+	{
+		return Rect(r.x, r.y, r.w, r.h);
 	}
 public:
 	struct Masks
@@ -219,12 +229,12 @@ public:
 	}
     bool SetClipRect(const Rect& rectangle)noexcept
 	{
-		SDL_Rect rect=rectangle;
+		SDL_Rect rect=RectSDL(rectangle);
 		return SDL_SetClipRect(surface, &rect);
 	}
     void GetClipRect(const Rect& rectangle)noexcept
 	{
-		SDL_Rect rect=rectangle;
+		SDL_Rect rect=RectSDL(rectangle);
 		return SDL_GetClipRect(surface, &rect);
 	}
     void Blit(Surface&, Rect, Rect);

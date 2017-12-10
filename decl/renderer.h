@@ -96,13 +96,13 @@ public:
 	void DrawBorder(const Rect& rectangle, const Color& col)
 	{
 		SetDrawColor(col);
-		SDL_Rect rect=rectangle;
+		SDL_Rect rect=Surface::RectSDL(rectangle);
 		Error::IfNegative(SDL_RenderDrawRect(renderer, &rect));
 	}
 	void Draw(const Rect& rectangle, const Color& col)
 	{
 		SetDrawColor(col);
-		SDL_Rect rect=rectangle;
+		SDL_Rect rect=Surface::RectSDL(rectangle);
 		Error::IfNegative(SDL_RenderFillRect(renderer, &rect));
 	}
 	void Repaint(const Color& col)
@@ -139,7 +139,7 @@ public:
 	}
 	void SetViewport(const Rect& rectangle)
 	{
-		SDL_Rect rect=rectangle;
+		SDL_Rect rect=Surface::RectSDL(rectangle);
 		Error::IfNegative(SDL_RenderSetViewport(renderer, &rect));
 	}
 	void SetViewportToDefault()
@@ -150,11 +150,11 @@ public:
 	{
 		SDL_Rect result;
 		SDL_RenderGetViewport(renderer, &result);
-		return Rect(result);
+		return Surface::RectSDL(result);
 	}
 	void SetClipRect(const Rect& cliprect)
 	{
-		SDL_Rect rect=cliprect;
+		SDL_Rect rect=Surface::RectSDL(cliprect);
 		Error::IfNegative(SDL_RenderSetClipRect(renderer, &rect));
 	}
 	void DisableClipping()
@@ -169,7 +169,7 @@ public:
 	{
 		SDL_Rect result;
 		SDL_RenderGetClipRect(renderer, &result);
-		return Rect(result);
+		return Surface::RectSDL(result);
 	}
 	void SetLogicalSize(Point newsize)
 	{
@@ -222,7 +222,7 @@ public:
 	Surface ReadPixels(Rect from, Pixel::Format format)
 	{
 		Surface out(from.Size(), format);
-		SDL_Rect limit=from;
+		SDL_Rect limit=Surface::RectSDL(from);
         Error::IfNegative(SDL_RenderReadPixels(renderer, &limit, uint32(format), out.surface->pixels, out.BytesPerLine()));
         return (Surface&&)out;
 	}

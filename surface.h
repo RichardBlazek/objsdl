@@ -45,12 +45,12 @@ void Surface::Create(Point size, Pixel::Format format)
 }
 void Surface::Blit(Surface& second, Rect source, Rect destination)
 {
-	SDL_Rect src=source, dst=destination;
+	SDL_Rect src=Surface::RectSDL(source), dst=Surface::RectSDL(destination);
     Error::IfNegative(SDL_BlitSurface(second.surface, &src, surface, &dst));
 }
 void Surface::Draw(Surface& second, Rect source, Rect destination)
 {
-	SDL_Rect src=source, dst=destination;
+	SDL_Rect src=Surface::RectSDL(source), dst=Surface::RectSDL(destination);
     Error::IfNegative(SDL_BlitScaled(second.surface, &src, surface, &dst));
 }
 void Surface::EnableColorKey(const Color& col)
@@ -172,6 +172,6 @@ void Surface::DrawBorder(const Rect& rect, const Color& col)
 }
 void Surface::Draw(const Rect& rect, const Color& col)
 {
-	SDL_Rect r=rect;
+	SDL_Rect r=Surface::RectSDL(rect);
 	Error::IfNegative(SDL_FillRect(surface, &r, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a)));
 }

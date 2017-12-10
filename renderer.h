@@ -9,7 +9,7 @@ void Renderer::Create(const Window& window, Type flags, int index)
 
 void Renderer::Draw(Texture& texture, Rect source, Rect destination)
 {
-	SDL_Rect r1=source, r2=destination;
+	SDL_Rect r1=Surface::RectSDL(source), r2=Surface::RectSDL(destination);
 	Error::Condition(SDL_RenderCopy(renderer, texture.texture, &r1, &r2)!=0);
 }
 
@@ -22,7 +22,7 @@ void Renderer::Draw(Surface& surface, Rect source, Rect destination)
 
 void Renderer::Draw(Texture& texture, Rect source, Rect destination, double angle, Point center, Flip flip)
 {
-	SDL_Rect src=source, dst=destination;
+	SDL_Rect src=Surface::RectSDL(source), dst=Surface::RectSDL(destination);
 	SDL_Point tmp{center.x, center.y};
     Error::Condition(SDL_RenderCopyEx(renderer, texture.texture, &src, &dst, angle, &tmp, SDL_RendererFlip(flip))!=0);
 }
@@ -33,7 +33,7 @@ void Renderer::Draw(Surface& surface, Rect source, Rect destination, double angl
 }
 void Renderer::Draw(Texture& texture, Rect source, Rect destination, double angle, Flip flip)
 {
-	SDL_Rect src=source, dst=destination;
+	SDL_Rect src=Surface::RectSDL(source), dst=Surface::RectSDL(destination);
     Error::Condition(SDL_RenderCopyEx(renderer, texture.texture, &src, &dst, angle, nullptr, SDL_RendererFlip(flip))!=0);
 }
 void Renderer::Draw(Surface& surface, Rect source, Rect destination, double angle, Flip flip)

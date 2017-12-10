@@ -27,7 +27,7 @@ private:
 	Renderer rend;
 public:
 	friend Renderer;
-	friend void MessageBox::Show(const std::string&, const std::string&, Flags flag, SDL::Window*);
+	friend void MessageBox::Show(const std::string&, const std::string&, Flags flag, Window*);
 	friend size_t MessageBox::Dialog(const std::string&, const std::string&, const std::vector<std::string>&, size_t, size_t, Flags, ColorScheme*, Window*);
 	friend Cursor;
 	constexpr static Point UndefinedPos=Point(SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED);

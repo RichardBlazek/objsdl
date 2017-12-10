@@ -106,7 +106,7 @@ public:
 	LockedData Lock(const Rect& limit)
 	{
         LockedData result;
-        SDL_Rect rect=limit;
+        SDL_Rect rect=Surface::RectSDL(limit);
         Error::IfNegative(SDL_LockTexture(texture, &rect, &result.Pixels, &result.BytesPerLine));
         return result;
 	}
