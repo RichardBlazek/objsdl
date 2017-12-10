@@ -16,7 +16,7 @@ namespace TextInput
 	}
 	void SetCandidateListArea(const Rect& area)
 	{
-		SDL_Rect rect=SDL_Rect(area);
+		SDL_Rect rect=Surface::RectSDL(area);
 		SDL_SetTextInputRect(&rect);
 	}
 }
