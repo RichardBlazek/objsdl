@@ -29,7 +29,7 @@ namespace SDL
 #include "gamecontroller.h"
 #include "event.h"
 #include "keyboard.h"
-#include "drawbaseclass.h"
+#include "drawbase.h"
 #include "window.h"
 #include "surface.h"
 #include "renderer.h"

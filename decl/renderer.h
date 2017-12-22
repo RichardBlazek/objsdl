@@ -1,7 +1,7 @@
 #pragma once
 
 ///Object Renderer
-class Renderer: public NonCopyable, public DrawBaseClass
+class Renderer: public NonCopyable, public DrawBase
 {
 public:
 	enum class Type : uint32

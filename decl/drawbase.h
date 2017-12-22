@@ -1,10 +1,14 @@
 #pragma once
 
-class DrawBaseClass
+class DrawBase
 {
 public:
 	virtual void Draw(Surface& surface, Rect source, Rect destination)=0;
 	virtual void Draw(const Point& point, const Color& col)=0;
+	virtual void Draw(const Line& line, const Color& col)=0;
+	virtual void Draw(const Rect& rectangle, const Color& col)=0;
+	virtual void DrawBorder(const Rect& rectangle, const Color& col)=0;
+	virtual void Repaint(const Color& col)=0;
 	//Draw Circle---------------------------------------------------------------
 	void DrawBorder(const Circle& circle, const Color& color)
 	{

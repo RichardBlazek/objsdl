@@ -8,10 +8,10 @@ enum class BlendMode
     Mod=SDL_BLENDMODE_MOD
 };
 
-class Surface: public DrawBaseClass
+class Surface: public DrawBase
 {
 private:
-	friend DrawBaseClass;
+	friend DrawBase;
 	friend Window;
 	friend Texture;
 	friend Renderer;
@@ -202,8 +202,8 @@ public:
 		return result;
 	}
 	void Repaint(const Color& col);
-	using DrawBaseClass::Draw;
-	using DrawBaseClass::DrawBorder;
+	using DrawBase::Draw;
+	using DrawBase::DrawBorder;
 	void Draw(const Point& xy, const Color& col)
 	{
 		SetPixelRawValue(xy, SDL_MapRGBA(surface->format, col.r, col.g, col.b, col.a));

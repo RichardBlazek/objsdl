@@ -19,7 +19,7 @@ struct GammaRamp
 	}
 };
 
-class Window: public NonCopyable, public DrawBaseClass
+class Window: public NonCopyable, public DrawBase
 {
 private:
 	//Intern C window

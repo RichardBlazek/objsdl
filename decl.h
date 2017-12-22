@@ -1,7 +1,7 @@
 #pragma once
 
 class Cursor;
-class DrawBaseClass;
+class DrawBase;
 class Error;
 class Event;
 class Font;
@@ -14,7 +14,7 @@ class Window;
 
 #include "decl\messagebox.h"
 #include "decl\textinput.h"
-#include "decl\drawbaseclass.h"
+#include "decl\drawbase.h"
 #include "decl\surface.h"
 #include "decl\renderer.h"
 #include "decl\window.h"
