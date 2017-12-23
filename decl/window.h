@@ -132,15 +132,15 @@ public:
 	{
 		SDL_SetWindowSize(window, newSize.x, newSize.y);
 	}
-	uint32 GetID()noexcept
+	uint32 Id()noexcept
 	{
 		return SDL_GetWindowID(window);
 	}
-	Flags GetFlags()noexcept
+	Flags Options()noexcept
 	{
 		return Flags(SDL_GetWindowFlags(window));
 	}
-	float GetBrightness()noexcept
+	float Brightness()noexcept
 	{
 		return SDL_GetWindowBrightness(window);
 	}
@@ -148,7 +148,7 @@ public:
 	{
 		Error::IfNegative(SDL_SetWindowBrightness(window, brightness));
 	}
-	float GetOpacity()noexcept
+	float Opacity()noexcept
 	{
 		float opacity=0;
 		Error::IfNegative(SDL_GetWindowOpacity(window, &opacity));
@@ -171,23 +171,19 @@ public:
 	{
 		Error::IfNegative(SDL_SetWindowInputFocus(window));
 	}
-	void MakeResizable()noexcept
+	void SetResizability(bool on)noexcept
 	{
-		SDL_SetWindowResizable(window, SDL_TRUE);
-	}
-	void MakeNotResizable()noexcept
-	{
-		SDL_SetWindowResizable(window, SDL_FALSE);
+		SDL_SetWindowResizable(window, SDL_bool(on));
 	}
 	void ReleaseInput()noexcept
 	{
 		SDL_SetWindowGrab(window, SDL_FALSE);
 	}
-	uint32 GetDisplayIndex()noexcept
+	uint32 DisplayIndex()noexcept
 	{
 		return uint32(Error::IfNegative(SDL_GetWindowDisplayIndex(window)));
 	}
-	std::string GetTitle()noexcept
+	std::string Title()noexcept
 	{
 		return std::string(SDL_GetWindowTitle(window));
 	}
@@ -199,7 +195,7 @@ public:
 	{
         Error::IfNegative(SDL_SetWindowModalFor(window, parent.window));
 	}
-	void* GetData(const std::string& name)
+	void* Data(const std::string& name)
 	{
 		return SDL_GetWindowData(window, name.c_str());
 	}
@@ -215,19 +211,19 @@ public:
 	{
 		Error::IfNegative(SDL_SetWindowFullscreen(window, fullscreen_desktop?SDL_WINDOW_FULLSCREEN_DESKTOP:SDL_WINDOW_FULLSCREEN));
 	}
-	DisplayMode GetDisplayMode()
+	SDL::DisplayMode DisplayMode()
 	{
 		SDL_DisplayMode mode;
 		Error::IfNegative(SDL_GetWindowDisplayMode(window, &mode));
-		return DisplayMode(mode.format, mode.w,mode.h, mode.refresh_rate, mode.driverdata);
+		return SDL::DisplayMode(mode.format, mode.w, mode.h, mode.refresh_rate, mode.driverdata);
 	}
-	void SetDisplayMode(const DisplayMode& mode)
+	void SetDisplayMode(const SDL::DisplayMode& mode)
 	{
-		SDL_DisplayMode cMode{uint32(mode.format), mode.size.x, mode.size.y, mode.refresh_rate, mode.driver_data};
-		Error::IfNegative(SDL_SetWindowDisplayMode(window, &cMode));
+		SDL_DisplayMode mod{uint32(mode.format), mode.size.x, mode.size.y, mode.refresh_rate, mode.driver_data};
+		Error::IfNegative(SDL_SetWindowDisplayMode(window, &mod));
 	}
 	void SetIcon(Surface& image)noexcept;
-	Point GetMaxSize()noexcept
+	Point MaxSize()noexcept
 	{
 		Point result;
 		SDL_GetWindowMaximumSize(window, &result.x, &result.y);
@@ -237,7 +233,7 @@ public:
 	{
 		SDL_SetWindowMaximumSize(window, newMaxSize.x, newMaxSize.y);
 	}
-	Point GetMinSize()noexcept
+	Point MinSize()noexcept
 	{
 		Point result;
 		SDL_GetWindowMinimumSize(window, &result.x, &result.y);
@@ -255,35 +251,35 @@ public:
 	{
 		SDL_SetWindowBordered(window, SDL_FALSE);
 	}
-	GammaRamp GetGammaRamp()
+	SDL::GammaRamp GammaRamp()
 	{
-		GammaRamp result;
+		SDL::GammaRamp result;
 		Error::IfNegative(SDL_GetWindowGammaRamp(window, result.r,result.g,result.b));
 		return result;
 	}
-	void SetGammaRamp(const GammaRamp& gammaramp)
+	void SetGammaRamp(const SDL::GammaRamp& gammaramp)
 	{
 		Error::IfNegative(SDL_SetWindowGammaRamp(window, gammaramp.r, gammaramp.g, gammaramp.b));
 	}
-	uint32 GetTopBorderSize()const
+	uint32 UpBorderSize()const
 	{
         int size;
         Error::IfNegative(SDL_GetWindowBordersSize(window, &size, nullptr, nullptr, nullptr));
         return size;
 	}
-	uint32 GetLeftBorderSize()const
+	uint32 LeftBorderSize()const
 	{
         int size;
         Error::IfNegative(SDL_GetWindowBordersSize(window, nullptr, &size, nullptr, nullptr));
         return size;
 	}
-	uint32 GetBottomBorderSize()const
+	uint32 DownBorderSize()const
 	{
         int size;
         Error::IfNegative(SDL_GetWindowBordersSize(window, nullptr, nullptr, &size, nullptr));
         return size;
 	}
-	uint32 GetRightBorderSize()const
+	uint32 RightBorderSize()const
 	{
         int size;
         Error::IfNegative(SDL_GetWindowBordersSize(window, nullptr, nullptr, nullptr, &size));

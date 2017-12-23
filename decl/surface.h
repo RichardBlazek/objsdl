@@ -41,7 +41,7 @@ private:
 		return Rect(r.x, r.y, r.w, r.h);
 	}
 public:
-	struct Masks
+	struct ColorMasks
 	{
 		uint32 r, g, b, a=0;
 	};
@@ -79,12 +79,12 @@ public:
 	}
     Surface(Point size, const std::vector<Color>& colors, uint8 depth);
     Surface(Point size, const std::vector<Color>& colors, Pixel::Format format);
-    Surface(Point size, uint8 depth, Masks masks);
+    Surface(Point size, uint8 depth, ColorMasks masks);
     Surface(Point size, Pixel::Format format);
 
     void Create(Point size, const std::vector<Color>& colors, uint8 depth);
     void Create(Point size, const std::vector<Color>& colors, Pixel::Format format);
-	void Create(Point size, uint8 depth, Masks masks);
+	void Create(Point size, uint8 depth, ColorMasks masks);
 	void Create(Point size, Pixel::Format format);
 	static Surface LoadImg(const std::string& file)
 	{
@@ -120,19 +120,19 @@ public:
 			surface->format->palette->colors[i]=ColorSDL(colors[i]);
 		}
 	}
-    Masks GetMasks()const noexcept
+    ColorMasks Masks()const noexcept
 	{
-		return Masks{surface->format->Rmask, surface->format->Gmask, surface->format->Bmask, surface->format->Amask};
+		return ColorMasks{surface->format->Rmask, surface->format->Gmask, surface->format->Bmask, surface->format->Amask};
 	}
 private:
 	uint8* Index(const Point& xy)const noexcept
 	{
 		return ((uint8*)surface->pixels)+xy.y*BytesPerLine()+xy.x*BytesPerPixel();
 	}
-	uint32 GetPixelRawValue(const Point& xy)const
+	uint32 PixelRawValue(const Point& xy)const
 	{
 		if(xy.x<0||xy.x>=surface->w||xy.y<0||xy.y>=surface->h)
-			throw Error("Surface::GetPixel out of range");
+			throw Error("Pixel index out of range");
 		auto ptr=Index(xy);
 		switch(BytesPerPixel())
 		{
@@ -183,7 +183,7 @@ private:
 		return ColorSDL(surface->format->palette->colors[i]);
 	}
 public:
-	size_t GetPaletteSize()const noexcept
+	size_t PaletteSize()const noexcept
 	{
 		return surface->format->palette->ncolors;
 	}
@@ -195,10 +195,10 @@ public:
 		}
 		return *Index(xy);
 	}
-	Color GetPixel(const Point& xy)const
+	Color operator[](const Point& xy)const
 	{
 		Color result;
-		SDL_GetRGBA(GetPixelRawValue(xy), surface->format, &result.r, &result.g, &result.b, &result.a);
+		SDL_GetRGBA(PixelRawValue(xy), surface->format, &result.r, &result.g, &result.b, &result.a);
 		return result;
 	}
 	void Repaint(const Color& col);
@@ -232,7 +232,7 @@ public:
 		SDL_Rect rect=RectSDL(rectangle);
 		return SDL_SetClipRect(surface, &rect);
 	}
-    void GetClipRect(const Rect& rectangle)noexcept
+    void ClipRect(const Rect& rectangle)noexcept
 	{
 		SDL_Rect rect=RectSDL(rectangle);
 		return SDL_GetClipRect(surface, &rect);
@@ -250,7 +250,7 @@ public:
     void Unlock()noexcept;
     void EnableRLE();
     void DisableRLE();
-    Pixel::Format GetFormat()const noexcept
+    Pixel::Format Format()const noexcept
 	{
         return Pixel::Format(surface->format->format);
 	}

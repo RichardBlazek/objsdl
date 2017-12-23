@@ -19,8 +19,8 @@ public:
 	};
 	struct LockedData
 	{
-        void* Pixels;
-        int BytesPerLine;
+        void* pixels;
+        uint32 bytes_per_line;
 	};
 	friend Renderer;
     Texture()=default;
@@ -107,7 +107,9 @@ public:
 	{
         LockedData result;
         SDL_Rect rect=Surface::RectSDL(limit);
-        Error::IfNegative(SDL_LockTexture(texture, &rect, &result.Pixels, &result.BytesPerLine));
+        int bpl=result.bytes_per_line;
+        Error::IfNegative(SDL_LockTexture(texture, &rect, &result.pixels, &bpl));
+        result.bytes_per_line=bpl;
         return result;
 	}
 };
