@@ -38,31 +38,31 @@ std::string Joystick::NameOf(int device_index)
 {
 	return Error::IfZero(SDL_JoystickNameForIndex(device_index));
 }
-uint32 Joystick::GetId()
+uint32 Joystick::Id()
 {
 	int tmp=SDL_JoystickInstanceID(joystick);
 	Error::Condition(tmp<0);
 	return tmp;
 }
-uint32 Joystick::NumAxes()
+uint32 Joystick::CountOfAxes()
 {
 	int tmp=SDL_JoystickNumAxes(joystick);
 	Error::Condition(tmp<0);
 	return tmp;
 }
-uint32 Joystick::NumBalls()
+uint32 Joystick::CountOfBalls()
 {
 	int tmp=SDL_JoystickNumBalls(joystick);
 	Error::Condition(tmp<0);
 	return tmp;
 }
-uint32 Joystick::NumButtons()
+uint32 Joystick::CountOfButtons()
 {
 	int tmp=SDL_JoystickNumButtons(joystick);
 	Error::Condition(tmp<0);
 	return tmp;
 }
-uint32 Joystick::NumHats()
+uint32 Joystick::CountOfHats()
 {
 	int tmp=SDL_JoystickNumHats(joystick);
 	Error::Condition(tmp<0);
@@ -72,31 +72,31 @@ void Joystick::Update()
 {
 	SDL_JoystickUpdate();
 }
-uint32 Joystick::Num()
+uint32 Joystick::Count()
 {
 	int tmp=SDL_NumJoysticks();
 	Error::Condition(tmp<0);
 	return tmp;
 }
-int16 Joystick::GetAxis(int axis)
+int16 Joystick::Axis(uint32 axis)
 {
 	int16 value=SDL_JoystickGetAxis(joystick, axis);
 	Error::Condition(value==0&&std::string(SDL_GetError())!="");
 	return value;
 }
-Point Joystick::GetBallPos(int ball)
+Point Joystick::Ball(uint32 ball)
 {
 	Point dot;
 	Error::Condition(SDL_JoystickGetBall(joystick, ball, &dot.x, &dot.y)<0);
 	return dot;
 }
-bool Joystick::IsPressed(int button)
+bool Joystick::IsPressed(uint32 button)
 {
 	return SDL_JoystickGetButton(joystick, button);
 }
-auto Joystick::GetHatState(int hat)->HatState
+auto Joystick::HatPosition(uint32 hat)->Hat
 {
-	return HatState(SDL_JoystickGetHat(joystick,hat));
+	return Hat(SDL_JoystickGetHat(joystick, hat));
 }
 void Joystick::EnableEventPolling()
 {
@@ -114,7 +114,7 @@ bool Joystick::IsAttached()
 {
 	return SDL_JoystickGetAttached(joystick);
 }
-auto Joystick::GetGUID()->GUID
+auto Joystick::UniqueId()->GUID
 {
 	GUID tmp=SDL_JoystickGetGUID(joystick);
 	bool zero=true;
@@ -128,17 +128,17 @@ auto Joystick::GetGUID()->GUID
 	Error::Condition(zero);
 	return tmp;
 }
-std::string Joystick::GUID_ToString(GUID guid)
+std::string Joystick::StringFromGUID(GUID guid)
 {
 	char tmp[65]={0};
 	SDL_JoystickGetGUIDString(guid, tmp, 64);
 	return std::string(tmp);
 }
-auto Joystick::GUID_FromString(std::string str)->GUID
+auto Joystick::StringToGUID(std::string str)->GUID
 {
 	return SDL_JoystickGetGUIDFromString(str.c_str());
 }
-auto Joystick::GetPower()->Power
+auto Joystick::PowerState()->Power
 {
 	return Power(SDL_JoystickCurrentPowerLevel(joystick));
 }

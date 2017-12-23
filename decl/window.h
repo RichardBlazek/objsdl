@@ -54,7 +54,7 @@ public:
 		Shown=SDL_WINDOW_SHOWN,					///window is visible
 		Hidden=SDL_WINDOW_HIDDEN,				///window is not visible
 		Borderless=SDL_WINDOW_BORDERLESS,		///no window decoration
-		Resizable=SDL_WINDOW_RESIZABLE,		///window can be resized
+		Resizable=SDL_WINDOW_RESIZABLE,			///window can be resized
 		Minimized=SDL_WINDOW_MINIMIZED,			///window is minimized
 		Maximized=SDL_WINDOW_MAXIMIZED,			///window is maximized
 		InputGrabbed=SDL_WINDOW_INPUT_GRABBED,	///window has grabbed input focus
@@ -223,7 +223,7 @@ public:
 	}
 	void SetDisplayMode(const DisplayMode& mode)
 	{
-		SDL_DisplayMode cMode{uint32(mode.Format), mode.Size.x, mode.Size.y, mode.RefreshRate,mode.DriverData};
+		SDL_DisplayMode cMode{uint32(mode.format), mode.size.x, mode.size.y, mode.refresh_rate, mode.driver_data};
 		Error::IfNegative(SDL_SetWindowDisplayMode(window, &cMode));
 	}
 	void SetIcon(Surface& image)noexcept;

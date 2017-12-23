@@ -33,19 +33,19 @@ public:
 	};
 	struct Info
 	{
-		std::string Name;
-		Type Flags;
-		Pixel::Format TextureFormats[16];
-		uint32 NumberOfTextureFormats;
-		int32 MaxTextureWidth, MaxTextureHeight;
+		std::string name;
+		Type flags;
+		Pixel::Format texture_formats[16];
+		uint32 count_of_texture_formats;
+		int32 max_texture_width, max_texture_height;
 		Info()=default;
-		Info(const std::string& name, Type flags, Pixel::Format* textureformats, uint32 num_textureformats, int32 max_texturewidth, int32 max_textureheight)
-			:Name(name), Flags(flags), NumberOfTextureFormats(num_textureformats),
-				MaxTextureWidth(max_texturewidth), MaxTextureHeight(max_textureheight)
+		Info(const std::string& name, Type flags, Pixel::Format* textureformats, uint32 count_textureformats, int32 max_texturewidth, int32 max_textureheight)
+			:name(name), flags(flags), count_of_texture_formats(count_textureformats),
+				max_texture_width(max_texturewidth), max_texture_height(max_textureheight)
 		{
-			for(uint32 i=0;i<num_textureformats;++i)
+			for(uint32 i=0;i<count_of_texture_formats;++i)
 			{
-                TextureFormats[i]=Pixel::Format(textureformats[i]);
+                texture_formats[i]=Pixel::Format(textureformats[i]);
 			}
 		}
 	};

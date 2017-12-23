@@ -6,7 +6,7 @@ private:
     SDL_Joystick* joystick=nullptr;
 public:
 	using GUID=SDL_JoystickGUID;
-    enum class HatState: uint8
+    enum class Hat: uint8
     {
         Centred=0x0,
         Up=0x1,
@@ -41,23 +41,23 @@ public:
     ~Joystick();
     std::string Name();
     static std::string NameOf(int device_index);
-    uint32 GetId();
-    uint32 NumAxes();
-    uint32 NumBalls();
-    uint32 NumButtons();
-    uint32 NumHats();
+    uint32 Id();
+    uint32 CountOfAxes();
+    uint32 CountOfBalls();
+    uint32 CountOfButtons();
+    uint32 CountOfHats();
     static void Update();
-    static uint32 Num();
-    int16 GetAxis(int axis);
-    Point GetBallPos(int ball);
-    bool IsPressed(int button);
-    HatState GetHatState(int hat);
+    static uint32 Count();
+    int16 Axis(uint32 axis);
+    Point Ball(uint32 ball);
+    bool IsPressed(uint32 button);
+    Hat HatPosition(uint32 hat);
     static void EnableEventPolling();
     static void DisableEventPolling();
     static bool IsEnabledEventPolling();
     bool IsAttached();
-    GUID GetGUID();
-	Power GetPower();
-    static std::string GUID_ToString(GUID guid);
-    static GUID GUID_FromString(std::string str);
+    GUID UniqueId();
+	Power PowerState();
+    static std::string StringFromGUID(GUID guid);
+    static GUID StringToGUID(std::string str);
 };

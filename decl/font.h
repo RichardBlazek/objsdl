@@ -12,13 +12,13 @@ private:
 		}
 	}
 public:
-	enum class Style
+	enum class Flags
 	{
 		Normal=TTF_STYLE_NORMAL,
 		Bold=TTF_STYLE_BOLD,
 		Italic=TTF_STYLE_ITALIC,
 		Underline=TTF_STYLE_UNDERLINE,
-		StrikeThrough=TTF_STYLE_STRIKETHROUGH
+		Strikethrough=TTF_STYLE_STRIKETHROUGH
 	};
 	enum class Hinting
 	{
@@ -117,17 +117,17 @@ public:
 		ErrorIfNotOpened();
 		return (Surface&&)Surface(Error::IfZero(TTF_RenderGlyph_Solid(font, character, Surface::ColorSDL(textcolor))));
 	}
-	Style GetStyle()
+	Flags Style()
 	{
 		ErrorIfNotOpened();
-		return Style(TTF_GetFontStyle(font));
+		return Flags(TTF_GetFontStyle(font));
 	}
-	void SetStyle(Style fontstyle)
+	void SetStyle(Flags style)
 	{
 		ErrorIfNotOpened();
-		TTF_SetFontStyle(font, int(fontstyle));
+		TTF_SetFontStyle(font, int(style));
 	}
-	int32 GetOutline()
+	int32 Outline()
 	{
 		ErrorIfNotOpened();
 		return TTF_GetFontOutline(font);
@@ -137,7 +137,7 @@ public:
 		ErrorIfNotOpened();
 		TTF_SetFontOutline(font, outline);
 	}
-	Hinting GetHinting()
+	Hinting HintingType()
 	{
 		ErrorIfNotOpened();
 		return Hinting(TTF_GetFontHinting(font));
@@ -162,27 +162,27 @@ public:
 		ErrorIfNotOpened();
 		TTF_SetFontKerning(font, false);
 	}
-	uint32 GetMaxHeight()
+	uint32 MaxHeight()
 	{
 		ErrorIfNotOpened();
 		return TTF_FontHeight(font);
 	}
-	uint32 GetAscent()
+	uint32 Ascent()
 	{
 		ErrorIfNotOpened();
 		return TTF_FontAscent(font);
 	}
-	uint32 GetDescent()
+	uint32 Descent()
 	{
 		ErrorIfNotOpened();
 		return TTF_FontDescent(font);
 	}
-	uint32 GetLineSkip()
+	uint32 LineSkip()
 	{
 		ErrorIfNotOpened();
 		return TTF_FontLineSkip(font);
 	}
-	uint32 GetNumFaces()
+	uint32 CountOfFaces()
 	{
 		ErrorIfNotOpened();
 		return TTF_FontFaces(font);
@@ -197,7 +197,7 @@ public:
 		ErrorIfNotOpened();
 		return TTF_FontFaceFamilyName(font);
 	}
-	std::string GetFamilyName()
+	std::string FamilyName()
 	{
 		ErrorIfNotOpened();
 		auto x=TTF_FontFaceFamilyName(font);
@@ -208,7 +208,7 @@ public:
 		ErrorIfNotOpened();
 		return TTF_FontFaceStyleName(font);
 	}
-	std::string GetStyleName()
+	std::string StyleName()
 	{
 		ErrorIfNotOpened();
 		auto x=TTF_FontFaceStyleName(font);
@@ -259,31 +259,31 @@ public:
 		return result;
 	}
 };
-Font::Style operator|(Font::Style first, Font::Style second)noexcept
+Font::Flags operator|(Font::Flags first, Font::Flags second)noexcept
 {
-	return Font::Style(uint32(first)|uint32(second));
+	return Font::Flags(uint32(first)|uint32(second));
 }
-Font::Style operator&(Font::Style first, Font::Style second)noexcept
+Font::Flags operator&(Font::Flags first, Font::Flags second)noexcept
 {
-	return Font::Style(uint32(first)&uint32(second));
+	return Font::Flags(uint32(first)&uint32(second));
 }
-Font::Style operator^(Font::Style first, Font::Style second)noexcept
+Font::Flags operator^(Font::Flags first, Font::Flags second)noexcept
 {
-	return Font::Style(uint32(first)^uint32(second));
+	return Font::Flags(uint32(first)^uint32(second));
 }
-Font::Style& operator|=(Font::Style& first, Font::Style second)noexcept
+Font::Flags& operator|=(Font::Flags& first, Font::Flags second)noexcept
 {
 	return first=(first|second);
 }
-Font::Style& operator&=(Font::Style& first, Font::Style second)noexcept
+Font::Flags& operator&=(Font::Flags& first, Font::Flags second)noexcept
 {
 	return first=(first&second);
 }
-Font::Style& operator^=(Font::Style& first, Font::Style second)noexcept
+Font::Flags& operator^=(Font::Flags& first, Font::Flags second)noexcept
 {
 	return first=(first^second);
 }
-Font::Style operator~(Font::Style param)noexcept
+Font::Flags operator~(Font::Flags param)noexcept
 {
-	return Font::Style(~uint32(param));
+	return Font::Flags(~uint32(param));
 }
