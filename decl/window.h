@@ -73,7 +73,7 @@ public:
 	//Constructor
 	Window()=default;
 	//Constructor with parameters
-	Window(const std::string& title, Point pos, Point size, Flags flags=Flags::None, Renderer::Type render_flags=Renderer::Type::None, int index=-1);
+	Window(const std::string& title, Point pos, Point size, Flags flags=Flags::None, Renderer::Flags render_flags=Renderer::Flags::None, int index=-1);
 	//Move
 	Window(Window&&)noexcept;
 	Window& operator=(Window&&)noexcept;
@@ -81,7 +81,7 @@ public:
 	void Close()noexcept;
 	//If was Window destroyed, this function open it again
 	//If not, function destroy the window and open it again
-	void Open(const std::string& title, Point pos, Point size, Flags flags=Flags::None, Renderer::Type render_flags=Renderer::Type::None, int index=-1);
+	void Open(const std::string& title, Point pos, Point size, Flags flags=Flags::None, Renderer::Flags render_flags=Renderer::Flags::None, int index=-1);
 	//Destructor
 	~Window()noexcept
 	{

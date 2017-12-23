@@ -1,6 +1,6 @@
 #pragma once
 
-Window::Window(const std::string& title, Point pos, Point size, Flags flags, Renderer::Type render_flags, int index)
+Window::Window(const std::string& title, Point pos, Point size, Flags flags, Renderer::Flags render_flags, int index)
 {
 	Open(title, pos, size, flags, render_flags, index);
 }
@@ -28,7 +28,7 @@ Window& Window::operator=(Window&& init)noexcept
 }
 ///If was Window destroyed, this function open them again
 ///If not, function destroy the window and open them again
-void Window::Open(const std::string& title, Point pos, Point size, Flags flags, Renderer::Type render_flags, int index)
+void Window::Open(const std::string& title, Point pos, Point size, Flags flags, Renderer::Flags render_flags, int index)
 {
     Close();
     window=SDL_CreateWindow(title.c_str(), pos.x, pos.y, size.x, size.y, uint32(flags));

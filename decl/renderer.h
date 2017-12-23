@@ -4,7 +4,7 @@
 class Renderer: public NonCopyable, public DrawBase
 {
 public:
-	enum class Type : uint32
+	enum class Flags: uint32
 	{
 		None=0x0,
 		Software=SDL_RENDERER_SOFTWARE,
@@ -20,7 +20,7 @@ private:
 		Error::IfNegative(SDL_SetRenderDrawColor(renderer,col.r,col.g,col.b,col.a));
 	}
 
-	void Create(const Window& window, Type flags, int index);
+	void Create(const Window& window, Flags flags, int index);
 public:
 	friend Texture;
 	friend Window;
@@ -31,25 +31,6 @@ public:
 		Horizontal=SDL_FLIP_HORIZONTAL,
 		Vertical=SDL_FLIP_VERTICAL
 	};
-	struct Info
-	{
-		std::string name;
-		Type flags;
-		Pixel::Format texture_formats[16];
-		uint32 count_of_texture_formats;
-		int32 max_texture_width, max_texture_height;
-		Info()=default;
-		Info(const std::string& name, Type flags, Pixel::Format* textureformats, uint32 count_textureformats, int32 max_texturewidth, int32 max_textureheight)
-			:name(name), flags(flags), count_of_texture_formats(count_textureformats),
-				max_texture_width(max_texturewidth), max_texture_height(max_textureheight)
-		{
-			for(uint32 i=0;i<count_of_texture_formats;++i)
-			{
-                texture_formats[i]=Pixel::Format(textureformats[i]);
-			}
-		}
-	};
-
 	Renderer()=default;
 	Renderer(Renderer&& init):renderer(init.renderer)
 	{
@@ -127,15 +108,15 @@ public:
 		SDL_RenderPresent(renderer);
 	}
 	void SetTarget(Texture& texture);
-	void SetBlendMode(BlendMode mode)
+	void SetBlendMode(SDL::BlendMode mode)
 	{
 		Error::Condition(SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode(mode))<0);
 	}
-	BlendMode GetBlendMode()
+	SDL::BlendMode BlendMode()
 	{
 		SDL_BlendMode mode;
 		Error::IfNegative(SDL_GetRenderDrawBlendMode(renderer, &mode));
-		return BlendMode(mode);
+		return SDL::BlendMode(mode);
 	}
 	void SetViewport(const Rect& rectangle)
 	{
@@ -146,7 +127,7 @@ public:
 	{
 		Error::IfNegative(SDL_RenderSetViewport(renderer, nullptr));
 	}
-	Rect GetViewport()noexcept
+	Rect Viewport()noexcept
 	{
 		SDL_Rect result;
 		SDL_RenderGetViewport(renderer, &result);
@@ -165,7 +146,7 @@ public:
 	{
 		return bool(SDL_RenderIsClipEnabled(renderer));
 	}
-	Rect GetClipRect()noexcept
+	Rect ClipRect()noexcept
 	{
 		SDL_Rect result;
 		SDL_RenderGetClipRect(renderer, &result);
@@ -175,7 +156,7 @@ public:
 	{
 		Error::IfNegative(SDL_RenderSetLogicalSize(renderer, newsize.x, newsize.y));
 	}
-	Point GetLogicalSize()noexcept
+	Point LogicalSize()noexcept
 	{
 		Point result;
 		SDL_RenderGetLogicalSize(renderer, &result.x, &result.y);
@@ -193,7 +174,7 @@ public:
 	{
 		Error::IfNegative(SDL_RenderSetScale(renderer, xy.x, xy.y));
 	}
-	geometry::Point<float> GetScale()
+	geometry::Point<float> Scale()
 	{
 		geometry::Point<float> result;
 		SDL_RenderGetScale(renderer, &result.x, &result.y);
@@ -209,12 +190,35 @@ public:
 	{
 		return Error::IfNegative(SDL_GetNumRenderDrivers());
 	}
-	Info GetInfo()
+	std::vector<Pixel::Format> TextureFormats()
 	{
-		SDL_RendererInfo renderinfo;
-		Error::IfNegative(SDL_GetRendererInfo(renderer, &renderinfo));
-		return Info(renderinfo.name, Type(renderinfo.flags), reinterpret_cast<Pixel::Format*>(renderinfo.texture_formats), renderinfo.num_texture_formats, renderinfo.max_texture_width, renderinfo.max_texture_height);
+		SDL_RendererInfo info;
+		Error::IfNegative(SDL_GetRendererInfo(renderer, &info));
+		std::vector<Pixel::Format> result;
+		for(uint32 i=0;i<info.num_texture_formats;++i)
+		{
+			result.push_back(Pixel::Format(info.texture_formats[i]));
+		}
+		return func::Move(result);
 	}
+	Flags Type()
+	{
+		SDL_RendererInfo info;
+		Error::IfNegative(SDL_GetRendererInfo(renderer, &info));
+        return Flags(info.flags);
+	}
+	Point MaxTextureSize()
+	{
+		SDL_RendererInfo info;
+		Error::IfNegative(SDL_GetRendererInfo(renderer, &info));
+		return Point(info.max_texture_width, info.max_texture_height);
+	}
+    std::string Name()
+    {
+		SDL_RendererInfo info;
+		Error::IfNegative(SDL_GetRendererInfo(renderer, &info));
+		return std::string(info.name);
+    }
 	bool TargetSupported()
 	{
         return bool(SDL_RenderTargetSupported(renderer));
@@ -228,31 +232,31 @@ public:
 	}
 };
 
-Renderer::Type operator|(Renderer::Type a, Renderer::Type b)
+Renderer::Flags operator|(Renderer::Flags a, Renderer::Flags b)
 {
-	return Renderer::Type(uint32(a)|uint32(b));
+	return Renderer::Flags(uint32(a)|uint32(b));
 }
-Renderer::Type operator&(Renderer::Type a, Renderer::Type b)
+Renderer::Flags operator&(Renderer::Flags a, Renderer::Flags b)
 {
-	return Renderer::Type(uint32(a)&uint32(b));
+	return Renderer::Flags(uint32(a)&uint32(b));
 }
-Renderer::Type operator^(Renderer::Type a, Renderer::Type b)
+Renderer::Flags operator^(Renderer::Flags a, Renderer::Flags b)
 {
-	return Renderer::Type(uint32(a)^uint32(b));
+	return Renderer::Flags(uint32(a)^uint32(b));
 }
-Renderer::Type operator~(Renderer::Type a)
+Renderer::Flags operator~(Renderer::Flags a)
 {
-	return Renderer::Type(~uint32(a));
+	return Renderer::Flags(~uint32(a));
 }
-Renderer::Type operator|=(Renderer::Type& a, Renderer::Type b)
+Renderer::Flags operator|=(Renderer::Flags& a, Renderer::Flags b)
 {
 	return a=a|b;
 }
-Renderer::Type operator&=(Renderer::Type& a, Renderer::Type b)
+Renderer::Flags operator&=(Renderer::Flags& a, Renderer::Flags b)
 {
 	return a=a&b;
 }
-Renderer::Type operator^=(Renderer::Type& a, Renderer::Type b)
+Renderer::Flags operator^=(Renderer::Flags& a, Renderer::Flags b)
 {
 	return a=a^b;
 }

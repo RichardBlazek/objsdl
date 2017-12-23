@@ -1,6 +1,6 @@
 #pragma once
 
-void Renderer::Create(const Window& window, Type flags, int index)
+void Renderer::Create(const Window& window, Flags flags, int index)
 {
 	Destroy();
 	renderer=SDL_CreateRenderer(window.window, index, uint32(flags));
