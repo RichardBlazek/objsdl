@@ -113,7 +113,7 @@ public:
 			SDL_FreePalette(surface->format->palette);
 		}
 		surface->format->palette=Error::IfZero(SDL_AllocPalette(colors.size()));
-		for(size_t i=0; i<surface->format->palette->ncolors; ++i)
+		for(size_t i=0; i<size_t(surface->format->palette->ncolors); ++i)
 		{
 			surface->format->palette->colors[i]=ColorSDL(colors[i]);
 		}

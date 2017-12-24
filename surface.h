@@ -124,7 +124,7 @@ void Surface::Draw(const Line& line, const Color& col)
 						Point(pos.x, -pos.y);
 	};
 	Point d(line.end.x-line.begin.x, line.end.y-line.begin.y);
-	uint8 convf=0;
+	uint8 conf=0;
 	if(d.x>0&&d.y>0&&d.x>=d.y)
 		conf=1;
 	else if(d.x>0&&d.y>0&&d.x<d.y)
