@@ -43,7 +43,7 @@ private:
 public:
 	struct ColorMasks
 	{
-		uint32 r, g, b, a=0;
+		uint32 r, g, b, a;
 	};
     Surface()=default;
     void Destroy()
@@ -88,13 +88,11 @@ public:
 	void Create(Point size, Pixel::Format format);
 	static Surface LoadImg(const std::string& file)
 	{
-		Surface result(Error::IfZero(IMG_Load(file.c_str())));
-		return (Surface&&)result;
+		return (Surface&&)Surface(Error::IfZero(IMG_Load(file.c_str())));
 	}
 	static Surface LoadXPM(char** xpm)
 	{
-		Surface result(Error::IfZero(IMG_ReadXPMFromArray(xpm)));
-		return (Surface&&)result;
+		return (Surface&&)Surface(Error::IfZero(IMG_ReadXPMFromArray(xpm)));
 	}
 	void SaveAsBMP(const std::string& file)
 	{
@@ -115,7 +113,7 @@ public:
 			SDL_FreePalette(surface->format->palette);
 		}
 		surface->format->palette=Error::IfZero(SDL_AllocPalette(colors.size()));
-		for(size_t i=0, limit=surface->format->palette->ncolors;i<limit;++i)
+		for(size_t i=0; i<surface->format->palette->ncolors; ++i)
 		{
 			surface->format->palette->colors[i]=ColorSDL(colors[i]);
 		}
@@ -145,7 +143,7 @@ private:
 			case 4:
 				return *(uint32*)ptr;
 		}
-		return 0;
+		throw Error("Invalid value of Surface::BytesPerPixel()");
 	}
 	void SetPixelRawValue(const Point& xy, uint32 value)noexcept
 	{
@@ -256,8 +254,6 @@ public:
 	}
 	Surface Convert(Pixel::Format desired)
 	{
-		Surface result;
-		result.surface=SDL_ConvertSurfaceFormat(surface,uint32(desired),0);
-		return result;
+		return (Surface&&)Surface(SDL_ConvertSurfaceFormat(surface,uint32(desired),0));
 	}
 };

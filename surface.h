@@ -20,28 +20,24 @@ Surface::Surface(Point size, Pixel::Format format)
 void Surface::Create(Point size, const std::vector<Color>& colors, uint8 depth)
 {
     Destroy();
-    surface=SDL_CreateRGBSurface(0,size.x,size.y,depth, 0, 0, 0, 0);
-	Error::IfZero(surface);
+    surface=Error::IfZero(SDL_CreateRGBSurface(0,size.x,size.y,depth, 0, 0, 0, 0));
 	SetPalette(colors);
 }
 void Surface::Create(Point size, const std::vector<Color>& colors, Pixel::Format format)
 {
 	Destroy();
-    surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format));
-	Error::IfZero(surface);
+    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format)));
 	SetPalette(colors);
 }
 void Surface::Create(Point size, uint8 depth, ColorMasks masks)
 {
     Destroy();
-    surface=SDL_CreateRGBSurface(0,size.x,size.y,depth, BE_ToNative(masks.r), BE_ToNative(masks.g), BE_ToNative(masks.b), BE_ToNative(masks.a));
-	Error::IfZero(surface);
+    surface=Error::IfZero(SDL_CreateRGBSurface(0,size.x,size.y,depth, BE_ToNative(masks.r), BE_ToNative(masks.g), BE_ToNative(masks.b), BE_ToNative(masks.a)));
 }
 void Surface::Create(Point size, Pixel::Format format)
 {
     Destroy();
-    surface=SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format));
-	Error::IfZero(surface);
+    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format)));
 }
 void Surface::Blit(Surface& second, Rect source, Rect destination)
 {
@@ -105,53 +101,53 @@ void Surface::Repaint(const Color& col)
 }
 void Surface::Draw(const Line& line, const Color& col)
 {
-	auto TransformTo45=[](Point pos, uint8 convf)->Point
+	auto TransformTo45=[](Point pos, uint8 conf)->Point
 	{
-		return	convf==1?pos:
-				convf==2?Point(pos.y, pos.x):
-				convf==3?Point(pos.y, -pos.x):
-				convf==4?Point(-pos.x, pos.y):
-				convf==5?Point(-pos.x, -pos.y):
-				convf==6?Point(-pos.y, -pos.x):
-				convf==7?Point(-pos.y, pos.x):
+		return	conf==1?pos:
+				conf==2?Point(pos.y, pos.x):
+				conf==3?Point(pos.y, -pos.x):
+				conf==4?Point(-pos.x, pos.y):
+				conf==5?Point(-pos.x, -pos.y):
+				conf==6?Point(-pos.y, -pos.x):
+				conf==7?Point(-pos.y, pos.x):
 						Point(pos.x, -pos.y);
 	};
-	auto TransformFrom45=[](Point pos, uint8 convf)->Point
+	auto TransformFrom45=[](Point pos, uint8 conf)->Point
 	{
-		return	convf==1?pos:
-				convf==2?Point(pos.y, pos.x):
-				convf==7?Point(pos.y, -pos.x):
-				convf==4?Point(-pos.x, pos.y):
-				convf==5?Point(-pos.x, -pos.y):
-				convf==6?Point(-pos.y, -pos.x):
-				convf==3?Point(-pos.y, pos.x):
+		return	conf==1?pos:
+				conf==2?Point(pos.y, pos.x):
+				conf==7?Point(pos.y, -pos.x):
+				conf==4?Point(-pos.x, pos.y):
+				conf==5?Point(-pos.x, -pos.y):
+				conf==6?Point(-pos.y, -pos.x):
+				conf==3?Point(-pos.y, pos.x):
 						Point(pos.x, -pos.y);
 	};
 	Point d(line.end.x-line.begin.x, line.end.y-line.begin.y);
 	uint8 convf=0;
 	if(d.x>0&&d.y>0&&d.x>=d.y)
-		convf=1;
+		conf=1;
 	else if(d.x>0&&d.y>0&&d.x<d.y)
-		convf=2;
+		conf=2;
 	else if(d.x<=0&&d.y>0&& -d.x<d.y)
-		convf=3;
+		conf=3;
 	else if(d.x<=0&&d.y>0&& -d.x>=d.y)
-		convf=4;
+		conf=4;
 	else if(d.x<=0&&d.y<=0&& -d.x>= -d.y)
-		convf=5;
+		conf=5;
 	else if(d.x<=0&&d.y<=0&& -d.x< -d.y)
-		convf=6;
+		conf=6;
 	else if(d.x>0&&d.y<=0&&d.x< -d.y)
-		convf=7;
+		conf=7;
 	else
-		convf=8;
-	const Line transformed(TransformTo45(line.begin, convf), TransformTo45(line.end, convf));
+		conf=8;
+	const Line transformed(TransformTo45(line.begin, conf), TransformTo45(line.end, conf));
 	const Point diff(transformed.end-transformed.begin);
 	const Point d2=diff*2;
 	int predictor=d2.y-diff.x;
-	for(Point point=transformed.begin;point.x<=transformed.end.x;++point.x)
+	for(Point point=transformed.begin; point.x<=transformed.end.x; ++point.x)
 	{
-		Draw(TransformFrom45(point, convf), col);
+		Draw(TransformFrom45(point, conf), col);
 		if(predictor>=0)
 		{
 			++point.y;
