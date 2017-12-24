@@ -88,11 +88,11 @@ public:
 	void Create(Point size, Pixel::Format format);
 	static Surface LoadImg(const std::string& file)
 	{
-		return (Surface&&)Surface(Error::IfZero(IMG_Load(file.c_str())));
+		return func::Move(Surface(Error::IfZero(IMG_Load(file.c_str()))));
 	}
 	static Surface LoadXPM(char** xpm)
 	{
-		return (Surface&&)Surface(Error::IfZero(IMG_ReadXPMFromArray(xpm)));
+		return func::Move(Surface(Error::IfZero(IMG_ReadXPMFromArray(xpm))));
 	}
 	void SaveAsBMP(const std::string& file)
 	{
@@ -113,7 +113,7 @@ public:
 			SDL_FreePalette(surface->format->palette);
 		}
 		surface->format->palette=Error::IfZero(SDL_AllocPalette(colors.size()));
-		for(size_t i=0; i<size_t(surface->format->palette->ncolors); ++i)
+		for(size_t i=0; i<PaletteSize(); ++i)
 		{
 			surface->format->palette->colors[i]=ColorSDL(colors[i]);
 		}
@@ -176,11 +176,16 @@ private:
 				break;
 		}
 	}
-	Color IndexPalette(size_t i)const noexcept
-	{
-		return ColorSDL(surface->format->palette->colors[i]);
-	}
 public:
+	std::vector<Color> Palette()const noexcept
+	{
+		std::vector<Color> result(PaletteSize());
+		for(size_t i=0; i<PaletteSize(); ++i)
+		{
+			result[i]=ColorSDL(surface->format->palette->colors[i]);
+		}
+		return func::Move(result);
+	}
 	size_t PaletteSize()const noexcept
 	{
 		return surface->format->palette->ncolors;
@@ -254,6 +259,6 @@ public:
 	}
 	Surface Convert(Pixel::Format desired)
 	{
-		return (Surface&&)Surface(SDL_ConvertSurfaceFormat(surface,uint32(desired),0));
+		return (Surface&&)Surface(SDL_ConvertSurfaceFormat(surface, uint32(desired),0));
 	}
 };

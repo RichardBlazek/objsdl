@@ -26,7 +26,7 @@ void Surface::Create(Point size, const std::vector<Color>& colors, uint8 depth)
 void Surface::Create(Point size, const std::vector<Color>& colors, Pixel::Format format)
 {
 	Destroy();
-    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format)));
+    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, format.BitSize(), uint32(format)));
 	SetPalette(colors);
 }
 void Surface::Create(Point size, uint8 depth, ColorMasks masks)
@@ -36,8 +36,12 @@ void Surface::Create(Point size, uint8 depth, ColorMasks masks)
 }
 void Surface::Create(Point size, Pixel::Format format)
 {
+	if(format.IsIndexed())
+	{
+		throw Error("Surface::Create>No palette given, but format needs palette");
+	}
     Destroy();
-    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, Pixel::BitSize(format), uint32(format)));
+    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, format.BitSize(), uint32(format)));
 }
 void Surface::Blit(Surface& second, Rect source, Rect destination)
 {
