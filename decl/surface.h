@@ -98,6 +98,14 @@ public:
 	{
 		Error::IfNegative(SDL_SaveBMP(surface, file.c_str()));
 	}
+	void SaveAsJPG(const std::string& file, uint16 quality)
+	{
+		Error::IfNegative(IMG_SaveJPG(surface, file.c_str(), quality));
+	}
+	void SaveAsPNG(const std::string& file)
+	{
+		Error::IfNegative(IMG_SavePNG(surface, file.c_str()));
+	}
     uint8 BytesPerPixel()const noexcept
 	{
 		return surface->format->BytesPerPixel;
