@@ -87,6 +87,8 @@ public:
 	{
 		Close();
 	}
+	using DrawBase::Draw;
+	using DrawBase::DrawBorder;
 	//Window methods
 	void Minimize()noexcept
 	{

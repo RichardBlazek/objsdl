@@ -22,6 +22,8 @@ private:
 
 	void Create(const Window& window, Flags flags, int index);
 public:
+	using DrawBase::Draw;
+	using DrawBase::DrawBorder;
 	friend Texture;
 	friend Window;
 	//Types----------------------------------------------------------
