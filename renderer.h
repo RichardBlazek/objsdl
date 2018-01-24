@@ -7,6 +7,13 @@ void Renderer::Create(const Window& window, Flags flags, int index)
 	Error::IfZero(renderer);
 }
 
+Texture Renderer::LoadImg(const std::string& file)
+{
+	Texture tmp;
+	tmp.texture=Error::IfZero(IMG_LoadTexture(renderer, file.c_str()));
+	return (Texture&&)tmp;
+}
+
 void Renderer::Draw(Texture& texture, Rect source, Rect destination)
 {
 	SDL_Rect r1=Surface::RectSDL(source), r2=Surface::RectSDL(destination);

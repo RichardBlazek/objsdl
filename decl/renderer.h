@@ -26,6 +26,7 @@ public:
 	using DrawBase::DrawBorder;
 	friend Texture;
 	friend Window;
+	Texture LoadImg(const std::string& file);
 	//Types----------------------------------------------------------
 	enum class Flip
 	{

@@ -89,6 +89,10 @@ public:
 	}
 	using DrawBase::Draw;
 	using DrawBase::DrawBorder;
+	Renderer& Output()
+	{
+		return rend;
+	}
 	//Window methods
 	void Minimize()noexcept
 	{

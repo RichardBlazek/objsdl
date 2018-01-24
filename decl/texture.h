@@ -80,12 +80,6 @@ public:
 		SDL_Rect rectangle{pos.x, pos.y, int(pixels.Width()), int(pixels.Height())};
 		Error::IfNegative(SDL_UpdateTexture(texture, &rectangle, pixels.surface->pixels, pixels.BytesPerLine()));
 	}
-    static Texture LoadImg(const std::string& file, Renderer& rend)
-	{
-		Texture tmp;
-		tmp.texture=Error::IfZero(IMG_LoadTexture(rend.renderer, file.c_str()));
-		return (Texture&&)tmp;
-	}
 	void SetRGBMod(const Color& mod)
 	{
 		Error::IfNegative(SDL_SetTextureColorMod(texture, mod.r, mod.g, mod.b));
