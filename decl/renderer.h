@@ -27,6 +27,18 @@ public:
 	friend Texture;
 	friend Window;
 	Texture LoadImg(const std::string& file);
+	Texture MakeTexture(Surface src)
+	{
+		Texture result;
+		result.texture=Error::IfZero(SDL_CreateTextureFromSurface(renderer, src.surface));
+		return func::Move(result);
+	}
+	Texture MakeTexture(Renderer& renderer, Pixel::Format format, Texture::Access access, Point size)
+	{
+		Texture result;
+		result.texture=Error::IfZero(SDL_CreateTexture(renderer.renderer, uint32(format), int(access), size.x, size.y));
+		return func::Move(result);
+	}
 	//Types----------------------------------------------------------
 	enum class Flip
 	{

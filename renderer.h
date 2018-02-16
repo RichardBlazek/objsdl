@@ -22,7 +22,7 @@ void Renderer::Draw(Texture& texture, Rect source, Rect destination)
 
 void Renderer::Draw(Surface& surface, Rect source, Rect destination)
 {
-	Texture texture(*this, surface);
+	auto texture=MakeTexture(surface);
 	Draw(texture, source, destination);
 }
 
@@ -35,7 +35,7 @@ void Renderer::Draw(Texture& texture, Rect source, Rect destination, double angl
 }
 void Renderer::Draw(Surface& surface, Rect source, Rect destination, double angle, Point center, Flip flip)
 {
-	Texture texture(*this, surface);
+	auto texture=MakeTexture(surface);
 	Draw(texture, source, destination, angle, center, flip);
 }
 void Renderer::Draw(Texture& texture, Rect source, Rect destination, double angle, Flip flip)
@@ -45,7 +45,7 @@ void Renderer::Draw(Texture& texture, Rect source, Rect destination, double angl
 }
 void Renderer::Draw(Surface& surface, Rect source, Rect destination, double angle, Flip flip)
 {
-	Texture texture(*this, surface);
+	auto texture=MakeTexture(surface);
 	Draw(texture, source, destination, angle, flip);
 }
 void Renderer::SetTarget(Texture& texture)

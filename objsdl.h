@@ -10,6 +10,7 @@
 #include <vector>
 
 #include "../mylibraries/func.h"
+#include "../mylibraries/optional.h"
 #include "../mylibraries/geometry.h"
 #include "../mylibraries/colors.h"
 #include "../mylibraries/types.h"
@@ -27,11 +28,13 @@ namespace SDL
 #include "wm.h"
 #include "time.h"
 #include "gamecontroller.h"
+#include "keycode.h"
 #include "event.h"
 #include "keyboard.h"
 #include "drawbase.h"
 #include "window.h"
 #include "surface.h"
+#include "texture.h"
 #include "renderer.h"
 #include "cursor.h"
 #include "audio.h"

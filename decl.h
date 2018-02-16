@@ -16,10 +16,10 @@ class Window;
 #include "decl\textinput.h"
 #include "decl\drawbase.h"
 #include "decl\surface.h"
+#include "decl\texture.h"
 #include "decl\renderer.h"
 #include "decl\window.h"
 #include "decl\font.h"
-#include "decl\texture.h"
 #include "decl\joystick.h"
 
 void Error::Show()const

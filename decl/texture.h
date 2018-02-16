@@ -39,16 +39,6 @@ public:
 		src.texture=nullptr;
 		return *this;
 	}
-    Texture(Renderer& renderer, Pixel::Format format, Access access, Point size)
-		:texture(SDL_CreateTexture(renderer.renderer, uint32(format), int(access), size.x, size.y))
-	{
-		Error::IfZero(texture);
-	}
-    Texture(Renderer& renderer, Surface surface)
-		:texture(SDL_CreateTextureFromSurface(renderer.renderer, surface.surface))
-	{
-		Error::IfZero(texture);
-	}
     void Destroy()noexcept
 	{
 		if(texture)
