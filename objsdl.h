@@ -45,5 +45,4 @@ namespace SDL
 #include "cpu.h"
 #include "screensaver.h"
 #include "textinput.h"
-#include "mainloop.h"
 }

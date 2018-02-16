@@ -16,6 +16,7 @@ uint64 TicksPerSec()noexcept
 {
     return SDL_GetPerformanceFrequency();
 }
+
 class Timer
 {
 private:
