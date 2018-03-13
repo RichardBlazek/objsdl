@@ -35,8 +35,8 @@ public:
 	}
     Texture& operator=(Texture&& src)noexcept
     {
-		texture=src.texture;
-		src.texture=nullptr;
+    	Destroy();
+    	func::Swap(texture, src.texture);
 		return *this;
 	}
     void Destroy()noexcept
@@ -65,10 +65,11 @@ public:
 		Error::IfNegative(SDL_QueryTexture(texture, (uint32*)&result, nullptr, nullptr, nullptr));
 		return result;
 	}
-    void Update(const Surface& pixels, Point pos=Point())
+    void Update(Surface pixels, Point pos=Point())
 	{
-		SDL_Rect rectangle{pos.x, pos.y, int(pixels.Width()), int(pixels.Height())};
-		Error::IfNegative(SDL_UpdateTexture(texture, &rectangle, pixels.surface->pixels, pixels.BytesPerLine()));
+		auto surf=pixels.Convert(GetPixelFormat());
+		SDL_Rect rectangle{pos.x, pos.y, int(surf.Width()), int(surf.Height())};
+		Error::IfNegative(SDL_UpdateTexture(texture, &rectangle, surf.surface->pixels, surf.BytesPerLine()));
 	}
 	void SetRGBMod(const Color& mod)
 	{
