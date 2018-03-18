@@ -19,12 +19,11 @@ struct GammaRamp
 	}
 };
 
-class Window: public NonCopyable, public DrawBase
+class Window: public NonCopyable
 {
 private:
 	//Intern C window
 	SDL_Window* window=nullptr;
-	Renderer rend;
 public:
 	friend Renderer;
 	friend void MessageBox::Show(const std::string&, const std::string&, Flags flag, Window*);
@@ -73,25 +72,16 @@ public:
 	//Constructor
 	Window()=default;
 	//Constructor with parameters
-	Window(const std::string& title, Point pos, Point size, Flags flags=Flags::None, Renderer::Flags render_flags=Renderer::Flags::None, int index=-1);
+	Window(const std::string& title, Point pos, Point size, Flags flags=Flags::None);
 	//Move
 	Window(Window&&)noexcept;
 	Window& operator=(Window&&)noexcept;
 	//Destroying Window
 	void Close()noexcept;
-	//If was Window destroyed, this function open it again
-	//If not, function destroy the window and open it again
-	void Open(const std::string& title, Point pos, Point size, Flags flags=Flags::None, Renderer::Flags render_flags=Renderer::Flags::None, int index=-1);
 	//Destructor
 	~Window()noexcept
 	{
 		Close();
-	}
-	using DrawBase::Draw;
-	using DrawBase::DrawBorder;
-	Renderer& Output()
-	{
-		return rend;
 	}
 	//Window methods
 	void Minimize()noexcept
@@ -305,59 +295,6 @@ public:
 	void DisableHitTesting()
 	{
 		Error::IfNegative(SDL_SetWindowHitTest(window, nullptr, nullptr));
-	}
-	//Drawing methods
-	void Repaint(const Color& col)
-	{
-		rend.Repaint(col);
-	}
-	void Draw(const Point& point, const Color& col)
-	{
-        rend.Draw(point, col);
-	}
-	void Draw(const Line& line, const Color& col)
-	{
-		rend.Draw(line, col);
-	}
-	void DrawBorder(const Rect& rectangle, const Color& col)
-	{
-		rend.DrawBorder(rectangle, col);
-	}
-	void Draw(const Rect& rectangle, const Color& col)
-	{
-		rend.Draw(rectangle, col);
-	}
-
-	void Draw(Texture& texture, Rect source, Rect destination)
-	{
-		rend.Draw(texture, source, destination);
-	}
-	void Draw(Surface& surface, Rect source, Rect destination)
-	{
-		rend.Draw(surface, source, destination);
-	}
-
-	void Draw(Texture& texture, Rect source, Rect destination, double angle, Point center, Renderer::Flip flip)
-	{
-		rend.Draw(texture, source, destination, angle, center, flip);
-	}
-	void Draw(Surface& surface, Rect source, Rect destination, double angle, Point center, Renderer::Flip flip)
-	{
-		rend.Draw(surface, source, destination, angle, center, flip);
-	}
-
-	void Draw(Texture& texture, Rect source, Rect destination, double angle, Renderer::Flip flip)
-	{
-		rend.Draw(texture, source, destination, angle, flip);
-	}
-	void Draw(Surface& surface, Rect source, Rect destination, double angle, Renderer::Flip flip)
-	{
-		rend.Draw(surface, source, destination, angle, flip);
-	}
-
-	void Refresh()noexcept
-	{
-		rend.Show();
 	}
 };
 Window::Flags operator|(Window::Flags first, Window::Flags second)noexcept

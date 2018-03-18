@@ -1,11 +1,7 @@
 #pragma once
 
-void Renderer::Create(const Window& window, Flags flags, int index)
-{
-	Destroy();
-	renderer=SDL_CreateRenderer(window.window, index, uint32(flags));
-	Error::IfZero(renderer);
-}
+Renderer::Renderer(const Window& window, Flags flags, int index)
+	:renderer(Error::IfZero(SDL_CreateRenderer(window.window, index, uint32(flags)))) {}
 
 Texture Renderer::LoadImg(const std::string& file)
 {

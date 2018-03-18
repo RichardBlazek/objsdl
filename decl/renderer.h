@@ -12,6 +12,12 @@ public:
 		PresentVSync=SDL_RENDERER_PRESENTVSYNC,
 		TargetTexture=SDL_RENDERER_TARGETTEXTURE
 	};
+	enum class Flip
+	{
+		None=SDL_FLIP_NONE,
+		Horizontal=SDL_FLIP_HORIZONTAL,
+		Vertical=SDL_FLIP_VERTICAL
+	};
 private:
 	SDL_Renderer* renderer=nullptr;
 
@@ -20,7 +26,6 @@ private:
 		Error::IfNegative(SDL_SetRenderDrawColor(renderer,col.r,col.g,col.b,col.a));
 	}
 
-	void Create(const Window& window, Flags flags, int index);
 public:
 	using DrawBase::Draw;
 	using DrawBase::DrawBorder;
@@ -33,19 +38,12 @@ public:
 		result.texture=Error::IfZero(SDL_CreateTextureFromSurface(renderer, src.surface));
 		return func::Move(result);
 	}
-	Texture MakeTexture(Renderer& renderer, Pixel::Format format, Texture::Access access, Point size)
+	Texture MakeTexture(Pixel::Format format, Texture::Access access, Point size)
 	{
 		Texture result;
-		result.texture=Error::IfZero(SDL_CreateTexture(renderer.renderer, uint32(format), int(access), size.x, size.y));
+		result.texture=Error::IfZero(SDL_CreateTexture(renderer, uint32(format), int(access), size.x, size.y));
 		return func::Move(result);
 	}
-	//Types----------------------------------------------------------
-	enum class Flip
-	{
-		None=SDL_FLIP_NONE,
-		Horizontal=SDL_FLIP_HORIZONTAL,
-		Vertical=SDL_FLIP_VERTICAL
-	};
 	Renderer()=default;
 	Renderer(Renderer&& init):renderer(init.renderer)
 	{
@@ -53,18 +51,21 @@ public:
 	}
 	Renderer& operator=(Renderer&& init)
 	{
+		Close();
 		renderer=init.renderer;
 		init.renderer=nullptr;
 		return *this;
 	}
 
+	Renderer(const Window& window, Flags flags=Flags::None, int index=-1);
 	Renderer(Surface& surf)
-		:renderer(SDL_CreateSoftwareRenderer(surf.surface))
-	{
-		Error::IfZero(renderer);
-	}
+		:renderer(Error::IfZero(SDL_CreateSoftwareRenderer(surf.surface))) {}
 
-	void Destroy()noexcept
+	bool IsOpened()const noexcept
+	{
+		return bool(renderer);
+	}
+	void Close()noexcept
 	{
 		if(renderer)
 		{
@@ -75,7 +76,7 @@ public:
 
 	~Renderer()noexcept
 	{
-		Destroy();
+		Close();
 	}
 
 	//Drawing--------------------------------------------------------
@@ -125,7 +126,7 @@ public:
 	void SetTarget(Texture& texture);
 	void SetBlendMode(SDL::BlendMode mode)
 	{
-		Error::Condition(SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode(mode))<0);
+		Error::IfNegative(SDL_SetRenderDrawBlendMode(renderer, SDL_BlendMode(mode)));
 	}
 	SDL::BlendMode BlendMode()
 	{

@@ -46,7 +46,7 @@ public:
 		uint32 r, g, b, a;
 	};
     Surface()=default;
-    void Destroy()
+    void Close()
 	{
 		if(surface)
 		{
@@ -56,13 +56,23 @@ public:
 	}
     ~Surface()noexcept
 	{
-		Destroy();
+		Close();
 	}
+    Surface(Point size, const std::vector<Color>& colors, uint8 depth);
+    Surface(Point size, const std::vector<Color>& colors, Pixel::Format format);
+    Surface(Point size, uint8 depth, ColorMasks masks);
+    Surface(Point size, Pixel::Format format);
+
+    bool IsOpened()const noexcept
+    {
+    	return bool(surface);
+    }
+
     Surface(const Surface& init)
 		:surface(Error::IfZero(SDL_ConvertSurface(init.surface, init.surface->format, 0))) {}
     Surface& operator=(const Surface& init)
 	{
-		Destroy();
+		Close();
 		surface=Error::IfZero(SDL_ConvertSurface(init.surface, init.surface->format, 0));
 		return *this;
 	}
@@ -72,20 +82,12 @@ public:
 	}
     Surface& operator=(Surface&& init)noexcept
 	{
-		Destroy();
+		Close();
 		surface=init.surface;
 		init.surface=nullptr;
 		return *this;
 	}
-    Surface(Point size, const std::vector<Color>& colors, uint8 depth);
-    Surface(Point size, const std::vector<Color>& colors, Pixel::Format format);
-    Surface(Point size, uint8 depth, ColorMasks masks);
-    Surface(Point size, Pixel::Format format);
 
-    void Create(Point size, const std::vector<Color>& colors, uint8 depth);
-    void Create(Point size, const std::vector<Color>& colors, Pixel::Format format);
-	void Create(Point size, uint8 depth, ColorMasks masks);
-	void Create(Point size, Pixel::Format format);
 	static Surface LoadImg(const std::string& file)
 	{
 		return func::Move(Surface(Error::IfZero(IMG_Load(file.c_str()))));
@@ -226,17 +228,9 @@ public:
 	{
 		return surface->pitch;
 	}
-    uint32 Width()const noexcept
-	{
-		return surface->w;
-	}
-    uint32 Height()const noexcept
-	{
-		return surface->h;
-	}
 	Point Size()const noexcept
 	{
-		return Point(Width(), Height());
+		return Point(surface->w, surface->h);
 	}
     bool SetClipRect(const Rect& rectangle)noexcept
 	{

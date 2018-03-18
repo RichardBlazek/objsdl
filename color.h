@@ -122,11 +122,11 @@ namespace Pixel
 		{
 			return SDL_ISPIXELFORMAT_FOURCC(uint32(format));
 		}
-		uint8 BitSize()
+		uint8 BitsPexPixel()
 		{
 			return SDL_BITSPERPIXEL(uint32(format));
 		}
-		uint8 ByteSize()
+		uint8 BytesPerPixel()
 		{
 			return SDL_BYTESPERPIXEL(uint32(format));
 		}

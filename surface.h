@@ -2,46 +2,25 @@
 
 Surface::Surface(Point size, const std::vector<Color>& colors, uint8 depth)
 {
-	Create(size, colors, depth);
-}
-Surface::Surface(Point size, const std::vector<Color>& colors, Pixel::Format format)
-{
-	Create(size, colors, format);
-}
-Surface::Surface(Point size, uint8 depth, ColorMasks masks)
-{
-	Create(size, depth, masks);
-}
-Surface::Surface(Point size, Pixel::Format format)
-{
-	Create(size, format);
-}
-
-void Surface::Create(Point size, const std::vector<Color>& colors, uint8 depth)
-{
-    Destroy();
     surface=Error::IfZero(SDL_CreateRGBSurface(0,size.x,size.y,depth, 0, 0, 0, 0));
 	SetPalette(colors);
 }
-void Surface::Create(Point size, const std::vector<Color>& colors, Pixel::Format format)
+Surface::Surface(Point size, const std::vector<Color>& colors, Pixel::Format format)
 {
-	Destroy();
-    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, format.BitSize(), uint32(format)));
+    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, format.BitsPexPixel(), uint32(format)));
 	SetPalette(colors);
 }
-void Surface::Create(Point size, uint8 depth, ColorMasks masks)
+Surface::Surface(Point size, uint8 depth, ColorMasks masks)
 {
-    Destroy();
     surface=Error::IfZero(SDL_CreateRGBSurface(0,size.x,size.y,depth, BE_ToNative(masks.r), BE_ToNative(masks.g), BE_ToNative(masks.b), BE_ToNative(masks.a)));
 }
-void Surface::Create(Point size, Pixel::Format format)
+Surface::Surface(Point size, Pixel::Format format)
 {
 	if(format.IsIndexed())
 	{
 		throw Error("Surface::Create>No palette given, but format needs palette");
 	}
-    Destroy();
-    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, format.BitSize(), uint32(format)));
+    surface=Error::IfZero(SDL_CreateRGBSurfaceWithFormat(0,size.x,size.y, format.BitsPexPixel(), uint32(format)));
 }
 void Surface::Blit(Surface& second, Rect source, Rect destination)
 {
