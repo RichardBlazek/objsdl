@@ -12,20 +12,15 @@ Joystick& Joystick::operator=(Joystick&& joy)
 }
 void Joystick::Close()
 {
-	if(IsOpened())
+	if(joystick)
 	{
 		SDL_JoystickClose(joystick);
 		joystick=nullptr;
 	}
 }
-void Joystick::Open(int device_index)
-{
-	Close();
-	joystick=SDL_JoystickOpen(device_index);
-	Error::Condition(!joystick);
-}
 Joystick::Joystick(int device_index)
 	:joystick(Error::IfZero(SDL_JoystickOpen(device_index))) {}
+
 Joystick::~Joystick()
 {
 	Close();

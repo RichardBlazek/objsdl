@@ -36,7 +36,6 @@ public:
 		return bool(joystick);
 	}
     void Close();
-    void Open(int device_index);
     Joystick(int device_index);
     ~Joystick();
     std::string Name();
