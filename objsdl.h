@@ -34,7 +34,6 @@ namespace SDL
 #include "drawbase.h"
 #include "window.h"
 #include "surface.h"
-#include "texture.h"
 #include "renderer.h"
 #include "cursor.h"
 #include "audio.h"
