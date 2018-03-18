@@ -35,19 +35,9 @@ public:
 			font=nullptr;
 		}
 	}
-	void Open(const std::string& filename, uint32 size)
-	{
-		Close();
-		font=Error::IfZero(TTF_OpenFont(filename.c_str(), size));
-	}
-	void Open(const std::string& filename, uint32 size, uint32 index)
-	{
-		Close();
-		font=Error::IfZero(TTF_OpenFontIndex(filename.c_str(), size, index));
-	}
 	bool IsOpened()const
 	{
-		return font;
+		return bool(font);
 	}
 	Font()=default;
 	~Font()
@@ -55,19 +45,17 @@ public:
 		Close();
 	}
 	Font(const std::string& filename, uint32 size)
-	{
-		Open(filename, size);
-	}
+		:font(Error::IfZero(TTF_OpenFont(filename.c_str(), size))) {}
 	Font(const std::string& filename, uint32 size, uint32 index)
-	{
-		Open(filename, size, index);
-	}
+		:font(Error::IfZero(TTF_OpenFontIndex(filename.c_str(), size, index))) {}
+
 	Font(Font&& init):font(init.font)
 	{
 		init.font=nullptr;
 	}
 	Font& operator=(Font&& init)
 	{
+		Close();
 		font=init.font;
 		init.font=nullptr;
 		return *this;
