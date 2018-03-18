@@ -8,7 +8,6 @@ struct DisplayMode
 	Point size;
 	int refresh_rate;
 	void* driver_data;
-	DisplayMode()=default;
 	DisplayMode(Pixel::Format fmt, Point wh, int rate, void* driverdata)
 		:format(fmt), size(wh), refresh_rate(rate), driver_data(driverdata) {}
 private:
@@ -96,16 +95,16 @@ public:
 };
 namespace VideoDriver
 {
-std::string NameOfCurrent()
-{
-    return std::string(SDL_GetCurrentVideoDriver()?SDL_GetCurrentVideoDriver():"");
-}
-std::string Name(uint32 index)
-{
-    return std::string(SDL_GetVideoDriver(index)?SDL_GetVideoDriver(index):"");
-}
-uint32 Count()
-{
-	return Error::IfNegative(SDL_GetNumVideoDrivers());
-}
+	std::string NameOfCurrent()
+	{
+		return std::string(SDL_GetCurrentVideoDriver()?SDL_GetCurrentVideoDriver():"");
+	}
+	std::string Name(uint32 index)
+	{
+		return std::string(SDL_GetVideoDriver(index)?SDL_GetVideoDriver(index):"");
+	}
+	uint32 Count()
+	{
+		return Error::IfNegative(SDL_GetNumVideoDrivers());
+	}
 }
