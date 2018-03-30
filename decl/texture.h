@@ -17,53 +17,6 @@ public:
 		Color=SDL_TEXTUREMODULATE_COLOR,
 		Alpha=SDL_TEXTUREMODULATE_ALPHA
 	};
-	class LockWriter
-	{
-	private:
-		friend Texture;
-		Pixel::Format format;
-        uint8* pixels;
-        uint32 w, h;
-        void SetPixelRawValue(Point pos, uint32 value)
-        {
-        	auto ptr=pixels+pos.x*format.BytesPerPixel()+w*pos.y*format.BytesPerPixel();
-        	switch(format.BytesPerPixel())
-        	{
-				case 1:
-					*ptr=uint8(value);
-					break;
-				case 2:
-					*(uint16*)ptr=uint16(value);
-					break;
-				case 3:
-					if(IsBigEndian)
-					{
-						ptr[0]=uint8(value>>16);
-						ptr[1]=uint8(value>>8);
-						ptr[2]=uint8(value);
-					}
-					else
-					{
-						ptr[2]=uint8(value>>16);
-						ptr[1]=uint8(value>>8);
-						ptr[0]=uint8(value);
-					}
-					break;
-				case 4:
-					*(uint32*)ptr=value;
-					break;
-        	}
-        }
-	public:
-		LockWriter(Pixel::Format format, uint8* pixels, uint32 w, uint32 h)
-			:format(format), pixels(pixels), w(w), h(h) {}
-		void SetPixel(Point pos, Color col)
-		{
-			SDL_PixelFormat f;
-			f.format=format;
-            SetPixelRawValue(pos, SDL_MapRGBA(&f, col.r, col.g, col.b, col.a));
-		}
-	};
 	friend Renderer;
     Texture()=default;
     ~Texture()noexcept
@@ -104,21 +57,21 @@ public:
 	}
 	Access GetAccess()const
 	{
-		Access result;
-		Error::IfNegative(SDL_QueryTexture(texture, nullptr, (int*)&result, nullptr, nullptr));
-		return result;
+		int result;
+		Error::IfNegative(SDL_QueryTexture(texture, nullptr, &result, nullptr, nullptr));
+		return Access(result);
 	}
     Pixel::Format Format()const
 	{
-		Pixel::Format result;
-		Error::IfNegative(SDL_QueryTexture(texture, (uint32*)&result, nullptr, nullptr, nullptr));
-		return result;
+		uint32 result;
+		Error::IfNegative(SDL_QueryTexture(texture, &result, nullptr, nullptr, nullptr));
+		return Pixel::Format(result);
 	}
-    void Update(Surface pixels, Point pos=Point())
+    void Update(const Surface& pixels, Rect area)
 	{
-		auto surf=pixels.Convert(Format());
-		SDL_Rect rectangle{pos.x, pos.y, surf.Size().x, surf.Size().y};
-		Error::IfNegative(SDL_UpdateTexture(texture, &rectangle, surf.surface->pixels, surf.BytesPerLine()));
+		area=(area*Rect(pixels.Size())).ValueOr(Rect());
+		SDL_Rect rectangle{area.x, area.y, int(area.w), int(area.h)};
+		Error::IfNegative(SDL_UpdateTexture(texture, &rectangle, pixels.Index(area.Position()), pixels.BytesPerLine()));
 	}
 	void SetRGBMod(const Color& mod)
 	{
@@ -137,16 +90,66 @@ public:
 	{
 		Error::IfNegative(SDL_SetTextureBlendMode(texture, SDL_BlendMode(mode)));
 	}
-	LockWriter Lock(const Rect& limit)
+	class LockWriter: public NonCopyable
 	{
-        Pixel::Format format=Format();
-        Point size=Size();
+	private:
+		friend Texture;
+		Pixel::Format format;
+        uint8* pixels;
+        Point size;
+        void SetPixelRawValue(Point pos, uint32 value)
+        {
+			auto dst=pixels+(pos.x+pos.y*size.x)*format.BytesPerPixel();
+			switch(format.BytesPerPixel())
+			{
+				case 1:
+					*dst=uint8(value);
+					break;
+				case 2:
+					*(uint16*)dst=uint16(value);
+					break;
+				case 3:
+					if(IsBigEndian)
+					{
+						dst[0]=uint8(value>>16);
+						dst[1]=uint8(value>>8);
+						dst[2]=uint8(value);
+					}
+					else
+					{
+						dst[2]=uint8(value>>16);
+						dst[1]=uint8(value>>8);
+						dst[0]=uint8(value);
+					}
+					break;
+				case 4:
+					*(uint32*)dst=value;
+					break;
+			}
+        }
+		LockWriter(Pixel::Format format, uint8* pixels, Point size)
+			:format(format), pixels(pixels), size(size) {}
+	public:
+		void SetPixel(Point pos, Color col)
+		{
+        	if(pos.x>=0&&pos.y>=0&&pos.x<size.x&&pos.y<size.y)
+			{
+				auto f=SDL_AllocFormat(format);
+				SetPixelRawValue(pos, SDL_MapRGBA(f, col.r, col.g, col.b, col.a));
+				SDL_FreeFormat(f);
+			}
+		}
+	};
+	template<typename F>
+	void Lock(const Rect& limit, F write_func)
+	{
         SDL_Rect rect=Surface::RectSDL(limit);
         void* pixels=nullptr;
         int bpl=0;
 
         Error::IfNegative(SDL_LockTexture(texture, &rect, &pixels, &bpl));
 
-        return LockWriter(format, (uint8*)pixels, size.x, size.y);
+        write_func(LockWriter(Format(), (uint8*)pixels, Size()));
+        SDL_UnlockTexture(texture);
 	}
 };

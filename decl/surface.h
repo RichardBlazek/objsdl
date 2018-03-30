@@ -261,6 +261,6 @@ public:
 	}
 	Surface Convert(Pixel::Format desired)
 	{
-		return (Surface&&)Surface(SDL_ConvertSurfaceFormat(surface, uint32(desired),0));
+		return func::Move(Surface(SDL_ConvertSurfaceFormat(surface, uint32(desired),0)));
 	}
 };
