@@ -29,7 +29,7 @@ public:
 	}
 	events::MouseMotion MouseMotion()const
 	{
-		return events::MouseMotion{event.motion.windowID, event.motion.which!=SDL_TOUCH_MOUSEID, MouseButtonMask(event.motion.state), Point(event.motion.x, event.motion.y), Point(event.motion.x, event.motion.y)};
+		return events::MouseMotion{event.motion.windowID, event.motion.which!=SDL_TOUCH_MOUSEID, MouseButtonMask(event.motion.state), Point(event.motion.x, event.motion.y), Point(event.motion.xrel, event.motion.yrel)};
 	}
 	events::MouseButton MouseButton()const
 	{
