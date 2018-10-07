@@ -96,7 +96,7 @@ public:
     {
 		SDL_GameControllerUpdate();
     }
-    std::string GetName()
+    std::string Name()
     {
         auto str=SDL_GameControllerName(gcon);
         return std::string(str?str:"");
@@ -108,11 +108,11 @@ public:
     }
     static void EnableEventPolling()
 	{
-		Error::Condition(SDL_GameControllerEventState(1)<0);
+		Error::IfNegative(SDL_GameControllerEventState(1));
 	}
     static void DisableEventPolling()
 	{
-		Error::Condition(SDL_GameControllerEventState(0)<0);
+		Error::IfNegative(SDL_GameControllerEventState(0));
 	}
     static bool IsEnabledEventPolling()
 	{
@@ -150,14 +150,14 @@ public:
 	{
 		return Error::IfNegative(SDL_GameControllerAddMapping(mappingtext.c_str()));
 	}
-	std::string GetMapping()
+	std::string Mapping()
 	{
 		char* mappingstr=Error::IfZero(SDL_GameControllerMapping(gcon));
 		std::string mappingtext=mappingstr;
 		SDL_free(mappingstr);
         return mappingtext;
 	}
-	static std::string GetMappingForGUID(const Joystick::GUID& guid)
+	static std::string MappingForGUID(const Joystick::GUID& guid)
 	{
         char* mappingstr=Error::IfZero(SDL_GameControllerMappingForGUID(guid));
 		std::string mappingtext=mappingstr;
@@ -168,13 +168,13 @@ public:
 	{
         return SDL_GameControllerGetAttached(gcon);
 	}
-	int16 GetAxis(Axis axis)
+	int16 Axis(Axis axis)
 	{
 		int16 value=SDL_GameControllerGetAxis(gcon, SDL_GameControllerAxis(axis));
 		Error::Condition(value==0&&!std::string(SDL_GetError()).empty());
 		return value;
 	}
-	bool GetButton(Button button)
+	bool Button(Button button)
 	{
 		bool value=SDL_GameControllerGetButton(gcon, SDL_GameControllerButton(button));
 		Error::Condition(!value&&!std::string(SDL_GetError()).empty());
@@ -198,7 +198,7 @@ public:
 		auto str=SDL_GameControllerGetStringForButton(SDL_GameControllerButton(button));
         return std::string(str?str:"");
 	}
-	Bind GetBindForAxis(Axis axis)
+	Bind BindForAxis(Axis axis)
 	{
         auto bind=SDL_GameControllerGetBindForAxis(gcon, SDL_GameControllerAxis(axis));
         Bind result;
@@ -218,7 +218,7 @@ public:
 		}
 		return result;
 	}
-	Bind GetBindForButton(Button button)
+	Bind BindForButton(Button button)
 	{
         auto bind=SDL_GameControllerGetBindForButton(gcon, SDL_GameControllerButton(button));
         Bind result;
@@ -238,8 +238,20 @@ public:
 		}
 		return result;
 	}
+	static bool IsGameController(uint32 joy_index)
+	{
+		return bool(SDL_IsGameController(joy_index));
+	}
+	uint16 Vendor()
+	{
+		return Error::IfZero(SDL_GameControllerGetVendor(gcon));
+	}
+	uint16 Product()
+	{
+		return Error::IfZero(SDL_GameControllerGetProduct(gcon));
+	}
+	uint16 ProductVersion()
+	{
+		return Error::IfZero(SDL_GameControllerGetProductVersion(gcon));
+	}
 };
-bool IsGameController(uint32 joy_index)
-{
-    return bool(SDL_IsGameController(joy_index));
-}

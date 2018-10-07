@@ -139,15 +139,15 @@ auto Joystick::PowerState()->Power
 }
 uint16 Joystick::Vendor()
 {
-	return SDL_JoystickGetVendor(joystick);
+	return Error::IfZero(SDL_JoystickGetVendor(joystick));
 }
 uint16 Joystick::Product()
 {
-	return SDL_JoystickGetProduct(joystick);
+	return Error::IfZero(SDL_JoystickGetProduct(joystick));
 }
 uint16 Joystick::ProductVersion()
 {
-	return SDL_JoystickGetProductVersion(joystick);
+	return Error::IfZero(SDL_JoystickGetProductVersion(joystick));
 }
 auto Joystick::Kind()->Type
 {
@@ -155,15 +155,15 @@ auto Joystick::Kind()->Type
 }
 uint16 Joystick::VendorOf(int device_index)
 {
-	return SDL_JoystickGetDeviceVendor(device_index);
+	return Error::IfZero(SDL_JoystickGetDeviceVendor(device_index));
 }
 uint16 Joystick::ProductOf(int device_index)
 {
-	return SDL_JoystickGetDeviceProduct(device_index);
+	return Error::IfZero(SDL_JoystickGetDeviceProduct(device_index));
 }
 uint16 Joystick::ProductVersionOf(int device_index)
 {
-	return SDL_JoystickGetDeviceProductVersion(device_index);
+	return Error::IfZero(SDL_JoystickGetDeviceProductVersion(device_index));
 }
 auto Joystick::KindOf(int device_index)->Type
 {
