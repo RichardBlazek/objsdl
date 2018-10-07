@@ -18,7 +18,6 @@
 
 #include "oldsdl.h"
 
-///Object wrapper for SDL
 namespace SDL
 {
 #include "shapes.h"

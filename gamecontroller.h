@@ -145,7 +145,10 @@ public:
 		}
 		throw Error("GameController::ScanMapping(mappingtext)where mappingtext="+mappingtext+">invalid format of mappingtext");
 	}
-	///Returns true if added, false if updated
+	static uint32 CountOfMappings()
+	{
+		return Error::IfNegative(SDL_GameControllerNumMappings());
+	}
 	static bool AddMapping(const std::string& mappingtext)
 	{
 		return Error::IfNegative(SDL_GameControllerAddMapping(mappingtext.c_str()));
@@ -164,6 +167,13 @@ public:
 		SDL_free(mappingstr);
         return mappingtext;
 	}
+	static std::string MappingForIndex(int mapping_index)
+	{
+        char* mappingstr=Error::IfZero(SDL_GameControllerMappingForIndex(mapping_index));
+		std::string mappingtext=mappingstr;
+		SDL_free(mappingstr);
+        return mappingtext;
+	}
 	bool IsAttached()
 	{
         return SDL_GameControllerGetAttached(gcon);
@@ -176,8 +186,8 @@ public:
 	}
 	bool Button(Button button)
 	{
-		bool value=SDL_GameControllerGetButton(gcon, SDL_GameControllerButton(button));
-		Error::Condition(!value&&!std::string(SDL_GetError()).empty());
+		uint8 value=SDL_GameControllerGetButton(gcon, SDL_GameControllerButton(button));
+		Error::Condition(value==0&&!std::string(SDL_GetError()).empty());
 		return value;
 	}
 	static Axis AxisFromString(const std::string& str)

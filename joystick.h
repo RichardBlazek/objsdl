@@ -97,6 +97,14 @@ bool Joystick::IsEnabledEventPolling()
 {
 	return Error::IfNegative(SDL_JoystickEventState(-1));
 }
+void Joystick::Lock()
+{
+	SDL_LockJoysticks();
+}
+void Joystick::Unlock()
+{
+	SDL_UnlockJoysticks();
+}
 bool Joystick::IsAttached()
 {
 	return SDL_JoystickGetAttached(joystick);

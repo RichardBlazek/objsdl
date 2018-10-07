@@ -68,6 +68,8 @@ public:
     static void EnableEventPolling();
     static void DisableEventPolling();
     static bool IsEnabledEventPolling();
+    static void Lock();
+    static void Unlock();
     bool IsAttached();
     GUID UniqueId();
     static GUID UniqueIdOf(int device_index);
