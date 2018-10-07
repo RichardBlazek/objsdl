@@ -35,33 +35,27 @@ std::string Joystick::NameOf(int device_index)
 }
 uint32 Joystick::Id()
 {
-	int tmp=SDL_JoystickInstanceID(joystick);
-	Error::Condition(tmp<0);
-	return tmp;
+	return Error::IfNegative(SDL_JoystickInstanceID(joystick));
+}
+uint32 Joystick::IdOf(int device_index)
+{
+	return Error::IfNegative(SDL_JoystickGetDeviceInstanceID(device_index));
 }
 uint32 Joystick::CountOfAxes()
 {
-	int tmp=SDL_JoystickNumAxes(joystick);
-	Error::Condition(tmp<0);
-	return tmp;
+	return Error::IfNegative(SDL_JoystickNumAxes(joystick));
 }
 uint32 Joystick::CountOfBalls()
 {
-	int tmp=SDL_JoystickNumBalls(joystick);
-	Error::Condition(tmp<0);
-	return tmp;
+	return Error::IfNegative(SDL_JoystickNumBalls(joystick));
 }
 uint32 Joystick::CountOfButtons()
 {
-	int tmp=SDL_JoystickNumButtons(joystick);
-	Error::Condition(tmp<0);
-	return tmp;
+	return Error::IfNegative(SDL_JoystickNumButtons(joystick));
 }
 uint32 Joystick::CountOfHats()
 {
-	int tmp=SDL_JoystickNumHats(joystick);
-	Error::Condition(tmp<0);
-	return tmp;
+	return Error::IfNegative(SDL_JoystickNumHats(joystick));
 }
 void Joystick::Update()
 {
@@ -69,9 +63,7 @@ void Joystick::Update()
 }
 uint32 Joystick::Count()
 {
-	int tmp=SDL_NumJoysticks();
-	Error::Condition(tmp<0);
-	return tmp;
+	return Error::IfNegative(SDL_NumJoysticks());
 }
 int16 Joystick::Axis(uint32 axis)
 {
@@ -82,7 +74,7 @@ int16 Joystick::Axis(uint32 axis)
 Point Joystick::Ball(uint32 ball)
 {
 	Point dot;
-	Error::Condition(SDL_JoystickGetBall(joystick, ball, &dot.x, &dot.y)<0);
+	Error::IfNegative(SDL_JoystickGetBall(joystick, ball, &dot.x, &dot.y));
 	return dot;
 }
 bool Joystick::IsPressed(uint32 button)
@@ -95,11 +87,11 @@ auto Joystick::HatPosition(uint32 hat)->Hat
 }
 void Joystick::EnableEventPolling()
 {
-	Error::Condition(SDL_JoystickEventState(1)<0);
+	Error::IfNegative(SDL_JoystickEventState(1));
 }
 void Joystick::DisableEventPolling()
 {
-	Error::Condition(SDL_JoystickEventState(0)<0);
+	Error::IfNegative(SDL_JoystickEventState(0));
 }
 bool Joystick::IsEnabledEventPolling()
 {
@@ -113,12 +105,20 @@ auto Joystick::UniqueId()->GUID
 {
 	GUID tmp=SDL_JoystickGetGUID(joystick);
 	bool zero=true;
-	for(auto& element:tmp.data)
+	for(auto& x:tmp.data)
 	{
-		if(element)
-		{
-			zero=false;
-		}
+		zero=zero&&(!x);
+	}
+	Error::Condition(zero);
+	return tmp;
+}
+auto Joystick::UniqueIdOf(int device_index)->GUID
+{
+	GUID tmp=SDL_JoystickGetDeviceGUID(device_index);
+	bool zero=true;
+	for(auto& x:tmp.data)
+	{
+		zero=zero&&(!x);
 	}
 	Error::Condition(zero);
 	return tmp;
@@ -136,4 +136,36 @@ auto Joystick::StringToGUID(std::string str)->GUID
 auto Joystick::PowerState()->Power
 {
 	return Power(SDL_JoystickCurrentPowerLevel(joystick));
+}
+uint16 Joystick::Vendor()
+{
+	return SDL_JoystickGetVendor(joystick);
+}
+uint16 Joystick::Product()
+{
+	return SDL_JoystickGetProduct(joystick);
+}
+uint16 Joystick::ProductVersion()
+{
+	return SDL_JoystickGetProductVersion(joystick);
+}
+auto Joystick::Kind()->Type
+{
+	return Type(SDL_JoystickGetType(joystick));
+}
+uint16 Joystick::VendorOf(int device_index)
+{
+	return SDL_JoystickGetDeviceVendor(device_index);
+}
+uint16 Joystick::ProductOf(int device_index)
+{
+	return SDL_JoystickGetDeviceProduct(device_index);
+}
+uint16 Joystick::ProductVersionOf(int device_index)
+{
+	return SDL_JoystickGetDeviceProductVersion(device_index);
+}
+auto Joystick::KindOf(int device_index)->Type
+{
+	return Type(SDL_JoystickGetDeviceType(device_index));
 }

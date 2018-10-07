@@ -6,13 +6,26 @@ private:
     SDL_Joystick* joystick=nullptr;
 public:
 	using GUID=SDL_JoystickGUID;
+	enum class Type: uint8
+	{
+		Unknown=SDL_JOYSTICK_TYPE_UNKNOWN,
+		GameController=SDL_JOYSTICK_TYPE_GAMECONTROLLER,
+		Wheel=SDL_JOYSTICK_TYPE_WHEEL,
+		ArcadeStick=SDL_JOYSTICK_TYPE_ARCADE_STICK,
+		FlightStick=SDL_JOYSTICK_TYPE_FLIGHT_STICK,
+		DancePad=SDL_JOYSTICK_TYPE_DANCE_PAD,
+		Guitar=SDL_JOYSTICK_TYPE_GUITAR,
+		DrumKit=SDL_JOYSTICK_TYPE_DRUM_KIT,
+		ArcadePad=SDL_JOYSTICK_TYPE_ARCADE_PAD,
+		Throttle=SDL_JOYSTICK_TYPE_THROTTLE
+	};
     enum class Hat: uint8
     {
-        Centred=0x0,
-        Up=0x1,
-        Down=0x2,
-        Right=0x4,
-        Left=0x8,
+        Centred=SDL_HAT_CENTERED,
+        Up=SDL_HAT_UP,
+        Down=SDL_HAT_DOWN,
+        Right=SDL_HAT_RIGHT,
+        Left=SDL_HAT_LEFT,
         RightUp=Right|Up,
         LeftUp=Left|Up,
         RightDown=Right|Down,
@@ -41,6 +54,7 @@ public:
     std::string Name();
     static std::string NameOf(int device_index);
     uint32 Id();
+    uint32 IdOf(int device_index);
     uint32 CountOfAxes();
     uint32 CountOfBalls();
     uint32 CountOfButtons();
@@ -56,7 +70,16 @@ public:
     static bool IsEnabledEventPolling();
     bool IsAttached();
     GUID UniqueId();
+    static GUID UniqueIdOf(int device_index);
 	Power PowerState();
     static std::string StringFromGUID(GUID guid);
     static GUID StringToGUID(std::string str);
+    uint16 Vendor();
+    static uint16 VendorOf(int device_index);
+    uint16 Product();
+    static uint16 ProductOf(int device_index);
+    uint16 ProductVersion();
+    static uint16 ProductVersionOf(int device_index);
+    Type Kind();
+    static Type KindOf(int device_index);
 };
