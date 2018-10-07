@@ -246,6 +246,11 @@ public:
 		Error::IfNegative(TTF_SizeUNICODE(font, reinterpret_cast<const uint16*>(text.c_str()), &result.x, &result.y));
 		return result;
 	}
+	int32 KerningSize(char16_t previous, char16_t ch)
+	{
+		ErrorIfNotOpened();
+		return TTF_GetFontKerningSizeGlyphs(font, previous, ch);
+	}
 };
 Font::Flags operator|(Font::Flags first, Font::Flags second)noexcept
 {
