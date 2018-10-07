@@ -1,6 +1,5 @@
 #pragma once
 
-//Třída umožňující samotné přehrávání hudby
 class AudioDevice: public NonCopyable
 {
 private:
@@ -10,7 +9,6 @@ public:
 	{
 		Stopped=SDL_AUDIO_STOPPED, Playing=SDL_AUDIO_PLAYING, Paused=SDL_AUDIO_PAUSED
 	};
-	//Uzavření AudioDevice
 	void Close()
 	{
 		if(id!=0)
@@ -19,7 +17,6 @@ public:
 			id=0;
 		}
 	}
-	//Otevření AudioDevice
 	void Open(const Audio& desired, std::string name=std::string(), bool recording=false)
 	{
 		Close();
@@ -42,7 +39,6 @@ public:
 	{
 		Open(desired, result_format, allowed, name, recording);
 	}
-	//Destruktor
 	~AudioDevice()
 	{
 		Close();
@@ -62,17 +58,14 @@ public:
 	{
 		return Status(SDL_GetAudioDeviceStatus(id));
 	}
-	//Počet AudioDevice
 	static uint32 Count(bool recording=false)
 	{
 		return SDL_GetNumAudioDevices(recording);
 	}
-	//Jméno AudioDevice s daným indexem
 	static std::string NameOf(uint32 index, bool recording=false)
 	{
 		return std::string(SDL_GetAudioDeviceName(index, recording));
 	}
-	//Změna stavu
 	void Play()
 	{
 		SDL_PauseAudioDevice(id, 0);

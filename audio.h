@@ -1,15 +1,15 @@
 #pragma once
 
-class Audio
+class Audio: public NonCopyable
 {
 public:
 	friend class AudioDevice;
 #include "audio\format.h"
-#include "audio\buffer.h"
 private:
 	SDL_AudioSpec data;
 public:
 	using CallbackType=void(*)(void*, uint8*, int);
+	using Buffer=std::vector<uint8>;
 
 	Audio(int frequency, Format fmt, uint8 channels, uint16 samples, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
 	{
@@ -20,7 +20,10 @@ public:
 		data.callback=callback;
 		data.userdata=userdata;
 	}
-
+	~Audio()
+	{
+		delete data.userdata;
+	}
 	void SetFrequency(int frequency)noexcept
 	{
 		data.freq=frequency;
@@ -41,19 +44,21 @@ public:
 	{
 		data.callback=callback;
 	}
-	template<typename T>
-	void SetUserdata(T* userdata)
+	void SetBuffer(const Buffer& userdata)
 	{
-		data.userdata=(void*)userdata;
+		data.userdata=new Buffer(userdata);
+	}
+	void SetBuffer(Buffer&& userdata)
+	{
+		data.userdata=new Buffer(func::Move(userdata));
+	}
+	Buffer& GetBuffer()const
+	{
+		return *(Buffer*)data.userdata;
 	}
 	CallbackType GetCallback()const
 	{
 		return data.callback;
-	}
-	template<typename T=void>
-	T* GetUserdata()const
-	{
-		return (T*)data.userdata;
 	}
 	int GetFrequency()const noexcept
 	{
@@ -71,30 +76,12 @@ public:
 	{
 		return data.samples;
 	}
-
 	enum class AllowedChanges
 	{
 		None=0, Frequency=SDL_AUDIO_ALLOW_FREQUENCY_CHANGE, Format=SDL_AUDIO_ALLOW_FORMAT_CHANGE,
 		Channels=SDL_AUDIO_ALLOW_CHANNELS_CHANGE, Any=SDL_AUDIO_ALLOW_ANY_CHANGE
 	};
-	std::tuple<Audio, WAVBuffer> LoadWAV(const std::string& file);
-
-	void Convert(int freq, Format fmt, uint8 channels, const uint8* src, uint8* dst, size_t len)const
-	{
-		SDL_AudioCVT cvt;
-		SDL_BuildAudioCVT(&cvt, data.format, data.channels, data.freq, SDL_AudioFormat(fmt), channels, freq);
-		cvt.len=len;
-		cvt.buf=new uint8[cvt.len*cvt.len_mult];
-		SDL_memcpy(cvt.buf, src, cvt.len);
-		SDL_ConvertAudio(&cvt);
-		SDL_memcpy(dst, cvt.buf, cvt.len_cvt);
-		delete[] cvt.buf;
-	}
-	void Convert(int freq, Format fmt, uint8 channels, uint8* data, size_t len)const
-	{
-		Convert(freq, fmt, channels, data, data, len);
-	}
-
+	std::tuple<Audio, Buffer> LoadWAV(const std::string& file);
 	static uint32 CountOfDrivers()
 	{
 		return SDL_GetNumAudioDrivers();
@@ -118,17 +105,16 @@ public:
 		SDL_MixAudioFormat(dst, src, SDL_AudioFormat(format), len, volume);
 	}
 };
-std::tuple<Audio, Audio::WAVBuffer> Audio::LoadWAV(const std::string& file)
+std::tuple<Audio, Audio::Buffer> Audio::LoadWAV(const std::string& file)
 {
 	Audio result(*this);
 	uint8* tmp_buf;
 	uint32 tmp_len;
-	SDL_AudioSpec* tmp=SDL_LoadWAV(file.c_str(), &data, &tmp_buf, &tmp_len);
-	Error::IfZero(tmp);
-	result.data=*tmp;
-	return std::make_tuple(result, WAVBuffer(tmp_buf,tmp_len));
+	result.data=*Error::IfZero(SDL_LoadWAV(file.c_str(), &data, &tmp_buf, &tmp_len));
+	result.userdata=new Buffer(tmp_buf, tmp_buf+tmp_len);
+	SDL_FreeWAV(tmp_buf);
+	return func::Move(result);
 }
-
 Audio::AllowedChanges operator~(Audio::AllowedChanges param)noexcept
 {
 	return Audio::AllowedChanges(~int(param));
@@ -158,3 +144,4 @@ Audio::AllowedChanges operator^=(Audio::AllowedChanges& first, Audio::AllowedCha
 	return first^=second;
 }
 #include "audio\device.h"
+#include "audio\stream.h"

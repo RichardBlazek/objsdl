@@ -1,6 +1,5 @@
 #pragma once
 
-//Formát zvukových dat
 enum class Format:uint16
 {
 	S8=AUDIO_S8,U8=AUDIO_U8,
