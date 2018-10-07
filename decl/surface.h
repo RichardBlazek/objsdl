@@ -68,12 +68,12 @@ public:
     	return bool(surface);
     }
 
-    Surface(const Surface& init)
-		:surface(Error::IfZero(SDL_ConvertSurface(init.surface, init.surface->format, 0))) {}
+    Surface(const Surface& init)SDL_Du
+		:surface(Error::IfZero(SDL_DuplicateSurface(init.surface))) {}
     Surface& operator=(const Surface& init)
 	{
 		Close();
-		surface=Error::IfZero(SDL_ConvertSurface(init.surface, init.surface->format, 0));
+		surface=Error::IfZero(SDL_DuplicateSurface(init.surface));
 		return *this;
 	}
 	Surface(Surface&& init)noexcept:surface(init.surface)
