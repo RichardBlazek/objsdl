@@ -178,13 +178,13 @@ public:
 	{
         return SDL_GameControllerGetAttached(gcon);
 	}
-	int16 Axis(Axis axis)
+	int16 AxisPosition(Axis axis)
 	{
 		int16 value=SDL_GameControllerGetAxis(gcon, SDL_GameControllerAxis(axis));
 		Error::Condition(value==0&&!std::string(SDL_GetError()).empty());
 		return value;
 	}
-	bool Button(Button button)
+	bool IsPressed(Button button)
 	{
 		uint8 value=SDL_GameControllerGetButton(gcon, SDL_GameControllerButton(button));
 		Error::Condition(value==0&&!std::string(SDL_GetError()).empty());

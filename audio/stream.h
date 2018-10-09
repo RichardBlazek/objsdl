@@ -7,8 +7,8 @@ private:
 public:
 	AudioStream()=default;
 	AudioStream(Audio::Format src_format, uint8 src_channels, int src_freq, Audio::Format dst_format, uint8 dst_channels, int dst_freq)
-		:stream(Error::IfZero(SDL_NewAudioStream(src_format, src_channels, src_rate, dst_format, dst_channels, dst_rate))) {}
-	AudioStrear(AudioStream&& init):stream(init.stream)
+		:stream(Error::IfZero(SDL_NewAudioStream(SDL_AudioFormat(src_format), src_channels, src_freq, SDL_AudioFormat(dst_format), dst_channels, dst_freq))) {}
+	AudioStream(AudioStream&& init):stream(init.stream)
 	{
 		init.stream=nullptr;
 	}
@@ -17,10 +17,7 @@ public:
 		SDL_FreeAudioStream(stream);
 		stream=init.stream;
 		init.stream=nullptr;
-	}
-	void Put(const Buffer& data)
-	{
-		Error::IfNegative(SDL_AudioStreamPut(stream, data.data(), data.size()));
+		return *this;
 	}
 	void Flush()
 	{
@@ -28,13 +25,18 @@ public:
 	}
 	size_t Available()
 	{
-		return Error::IfNegative(SDL_AudioStreamAvailable(stream, buf, max_len));
+		return Error::IfNegative(SDL_AudioStreamAvailable(stream));
 	}
-	Buffer Get()
+	void operator<<(const std::vector<uint8>& data)
 	{
-		Buffer buf(Available());
-		buf.resize(func::Min(Error::IfNegative(SDL_AudioStreamGet(stream, buf.data(), buf.size())), buf.size()));
-		return func::Move(buf);
+		Error::IfNegative(SDL_AudioStreamPut(stream, data.data(), data.size()));
+	}
+	void operator>>(std::vector<uint8>& dest)
+	{
+		auto size=dest.size();
+		dest.resize(size+Available());
+		auto loaded=Error::IfNegative(SDL_AudioStreamGet(stream, dest.data()+size, dest.size()-size));
+		dest.resize(size+loaded);
 	}
 	void Clear()
 	{

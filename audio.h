@@ -1,6 +1,6 @@
 #pragma once
 
-class Audio: public NonCopyable
+class Audio
 {
 public:
 	friend class AudioDevice;
@@ -9,7 +9,6 @@ private:
 	SDL_AudioSpec data;
 public:
 	using CallbackType=void(*)(void*, uint8*, int);
-	using Buffer=std::vector<uint8>;
 
 	Audio(int frequency, Format fmt, uint8 channels, uint16 samples, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
 	{
@@ -19,10 +18,6 @@ public:
 		data.samples=samples;
 		data.callback=callback;
 		data.userdata=userdata;
-	}
-	~Audio()
-	{
-		delete data.userdata;
 	}
 	void SetFrequency(int frequency)noexcept
 	{
@@ -44,17 +39,15 @@ public:
 	{
 		data.callback=callback;
 	}
-	void SetBuffer(const Buffer& userdata)
+	template<typename T>
+	void SetUserdata(T* userdata)
 	{
-		data.userdata=new Buffer(userdata);
+		data.userdata=userdata;
 	}
-	void SetBuffer(Buffer&& userdata)
+	template<typename T>
+	const T* GetUserdata()const
 	{
-		data.userdata=new Buffer(func::Move(userdata));
-	}
-	Buffer& GetBuffer()const
-	{
-		return *(Buffer*)data.userdata;
+		return (T*)data.userdata;
 	}
 	CallbackType GetCallback()const
 	{
@@ -81,7 +74,7 @@ public:
 		None=0, Frequency=SDL_AUDIO_ALLOW_FREQUENCY_CHANGE, Format=SDL_AUDIO_ALLOW_FORMAT_CHANGE,
 		Channels=SDL_AUDIO_ALLOW_CHANNELS_CHANGE, Any=SDL_AUDIO_ALLOW_ANY_CHANGE
 	};
-	std::tuple<Audio, Buffer> LoadWAV(const std::string& file);
+	std::tuple<Audio, std::vector<uint8>> LoadWAV(const std::string& file);
 	static uint32 CountOfDrivers()
 	{
 		return SDL_GetNumAudioDrivers();
@@ -105,15 +98,15 @@ public:
 		SDL_MixAudioFormat(dst, src, SDL_AudioFormat(format), len, volume);
 	}
 };
-std::tuple<Audio, Audio::Buffer> Audio::LoadWAV(const std::string& file)
+std::tuple<Audio, std::vector<uint8>> Audio::LoadWAV(const std::string& file)
 {
 	Audio result(*this);
 	uint8* tmp_buf;
 	uint32 tmp_len;
 	result.data=*Error::IfZero(SDL_LoadWAV(file.c_str(), &data, &tmp_buf, &tmp_len));
-	result.userdata=new Buffer(tmp_buf, tmp_buf+tmp_len);
+	std::vector<uint8> buffer(tmp_buf, tmp_buf+tmp_len);
 	SDL_FreeWAV(tmp_buf);
-	return func::Move(result);
+	return std::make_tuple(func::Move(result), buffer);
 }
 Audio::AllowedChanges operator~(Audio::AllowedChanges param)noexcept
 {

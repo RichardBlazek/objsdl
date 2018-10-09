@@ -3,7 +3,6 @@
 class Cursor;
 class DrawBase;
 class Error;
-class Event;
 class Font;
 class Joystick;
 class Renderer;

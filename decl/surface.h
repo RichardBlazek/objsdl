@@ -68,7 +68,7 @@ public:
     	return bool(surface);
     }
 
-    Surface(const Surface& init)SDL_Du
+    Surface(const Surface& init)
 		:surface(Error::IfZero(SDL_DuplicateSurface(init.surface))) {}
     Surface& operator=(const Surface& init)
 	{
