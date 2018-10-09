@@ -1,3 +1,5 @@
+namespace events
+{
 enum class Type:uint32
 {
 	First=SDL_FIRSTEVENT,//Unused
@@ -113,3 +115,4 @@ enum class Type:uint32
 	///This last event is only for bounding internal arrays
 	Last=SDL_LASTEVENT
 };
+}

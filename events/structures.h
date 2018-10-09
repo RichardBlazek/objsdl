@@ -1,5 +1,7 @@
 #pragma once
 
+namespace events
+{
 struct MouseWheel
 {
 	uint32 WindowID;
@@ -217,3 +219,4 @@ struct WindowManagement
 {
 	SDL::WindowManagement::Message Message;
 };
+}

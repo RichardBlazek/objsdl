@@ -28,6 +28,7 @@ namespace SDL
 #include "time.h"
 #include "gamecontroller.h"
 #include "keycode.h"
+#include "mousebutton.h"
 #include "event.h"
 #include "keyboard.h"
 #include "drawbase.h"
