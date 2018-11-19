@@ -12,15 +12,25 @@ public:
 	//Draw Circle---------------------------------------------------------------
 	void DrawBorder(const Circle& circle, const Color& color)
 	{
-		Point pos=circle.center;
+		constexpr float angle_stepsize=0.001;
 		float angle=0;
-		float angle_stepsize=0.001;
 		while(angle<2*pi)
 		{
-			pos.x=circle.center.x+circle.radius*SDL_cos(angle);
-			pos.y=circle.center.y+circle.radius*SDL_sin(angle);
-			Draw(pos, color);
+			Draw(circle.center+Point(SDL_cos(angle), SDL_sin(angle))*circle.radius, color);
 			angle+=angle_stepsize;
+		}
+	}
+	void Draw(const Circle& circle, const Color& color)
+	{
+		for(int32 row=-circle.radius; row<circle.radius; ++row)
+		{
+			for(int32 col=-circle.radius; col<circle.radius; ++col)
+			{
+				if(geometry::coordinates::Polar<double, double>(Point(col, row)).lenght<=circle.radius)
+				{
+					Draw(circle.center+Point(col, row), color);
+				}
+			}
 		}
 	}
 	//Draw text-----------------------------------------------------------------
