@@ -22,13 +22,16 @@ public:
 	}
 	void Draw(const Circle& circle, const Color& color)
 	{
-		for(int32 row=-circle.radius; row<circle.radius; ++row)
+		for(int32 row=0; row<=circle.radius; ++row)
 		{
-			for(int32 col=-circle.radius; col<circle.radius; ++col)
+			for(int32 col=0; col<=circle.radius; ++col)
 			{
 				if(geometry::coordinates::Polar<double, double>(Point(col, row)).lenght<=circle.radius)
 				{
-					Draw(circle.center+Point(col, row), color);
+					Draw(circle.center+Point( col, row), color);
+					Draw(circle.center+Point( col,-row), color);
+					Draw(circle.center+Point(-col, row), color);
+					Draw(circle.center+Point(-col,-row), color);
 				}
 			}
 		}
