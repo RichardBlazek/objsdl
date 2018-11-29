@@ -72,7 +72,7 @@ public:
 	//Constructor
 	Window()=default;
 	//Constructor with parameters
-	Window(const std::string& title, Point pos, Point size, Flags flags=Flags::None);
+	Window(const std::string& title, Rect pos, Flags flags=Flags::None);
 	//Move
 	Window(Window&&)noexcept;
 	Window& operator=(Window&&)noexcept;

@@ -20,8 +20,8 @@ Window& Window::operator=(Window&& init)noexcept
 	return *this;
 }
 
-Window::Window(const std::string& title, Point pos, Point size, Flags flags)
-	:window(Error::IfZero(SDL_CreateWindow(title.c_str(), pos.x, pos.y, size.x, size.y, uint32(flags)))) {}
+Window::Window(const std::string& title, Rect pos, Flags flags)
+	:window(Error::IfZero(SDL_CreateWindow(title.c_str(), pos.x, pos.y, pos.w, pos.h, uint32(flags)))) {}
 
 void Window::SetIcon(Surface& image)noexcept
 {
