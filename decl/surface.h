@@ -132,11 +132,11 @@ public:
 	{
 		return ColorMasks{surface->format->Rmask, surface->format->Gmask, surface->format->Bmask, surface->format->Amask};
 	}
-private:
 	uint8* Index(const Point& xy)const noexcept
 	{
 		return ((uint8*)surface->pixels)+xy.y*BytesPerLine()+xy.x*BytesPerPixel();
 	}
+private:
 	uint32 PixelRawValue(const Point& xy)const
 	{
 		if(xy.x<0||xy.x>=surface->w||xy.y<0||xy.y>=surface->h)
@@ -199,14 +199,6 @@ public:
 	size_t PaletteSize()const noexcept
 	{
 		return surface->format->palette->ncolors;
-	}
-	uint8& Index8(const Point& xy)
-	{
-		if(BitsPerPixel()!=8)
-		{
-			throw Error("Surface::Index8>This surface is not 8-bit!");
-		}
-		return *Index(xy);
 	}
 	Color operator[](const Point& xy)const
 	{
