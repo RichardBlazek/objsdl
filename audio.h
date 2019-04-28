@@ -7,17 +7,21 @@ public:
 #include "audio\format.h"
 private:
 	SDL_AudioSpec data;
+	static void AudioSpecCallback(void* callback, uint8* stream, int len)
+	{
+		((std::function<void(uint8*,size_t)>*)callback)->operator()(stream, len);
+	}
 public:
 	using CallbackType=void(*)(void*, uint8*, int);
 
-	Audio(int frequency, Format fmt, uint8 channels, uint16 samples, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
+	Audio(int frequency, Format fmt, uint8 channels, uint16 samples, std::function<void(uint8*,size_t)> callback)noexcept
 	{
 		data.freq=frequency;
 		data.format=SDL_AudioFormat(fmt);
 		data.channels=channels;
 		data.samples=samples;
-		data.callback=callback;
-		data.userdata=userdata;
+		data.callback=AudioSpecCallback;
+		data.userdata=&callback;
 	}
 	void SetFrequency(int frequency)noexcept
 	{
@@ -45,7 +49,7 @@ public:
 		data.userdata=userdata;
 	}
 	template<typename T>
-	const T* GetUserdata()const
+	T* GetUserdata()const
 	{
 		return (T*)data.userdata;
 	}
@@ -104,9 +108,11 @@ std::tuple<Audio, std::vector<uint8>> Audio::LoadWAV(const std::string& file)
 	uint8* tmp_buf;
 	uint32 tmp_len;
 	result.data=*Error::IfZero(SDL_LoadWAV(file.c_str(), &data, &tmp_buf, &tmp_len));
-	std::vector<uint8> buffer(tmp_buf, tmp_buf+tmp_len);
+	result.data.callback=AudioSpecCallback;
+	result.data.userdata=data.userdata;
+	std::vector<uint8> vect(tmp_buf, tmp_buf+tmp_len);
 	SDL_FreeWAV(tmp_buf);
-	return std::make_tuple(func::Move(result), buffer);
+	return func::Move(make_tuple(func::Move(result), func::Move(vect)));
 }
 Audio::AllowedChanges operator~(Audio::AllowedChanges param)noexcept
 {
