@@ -96,6 +96,37 @@ public:
 	{
 		return func::Move(Surface(Error::IfZero(IMG_ReadXPMFromArray(xpm))));
 	}
+	Surface Resized(SDL::Point size)
+	{
+		return func::Move(Format().IsIndexed()?
+				SDL::Surface(size, Palette(), Format()):
+				SDL::Surface(size, Format())
+		);
+	}
+	Surface TurnRight()
+	{
+		Surface result=Resized(~Size());
+		for(int y=0; y<Size().y; ++y)
+		{
+			for(int x=0; x<Size().x; ++x)
+			{
+				result.Draw(SDL::Point(result.Size().y-y-1, x), (*this)[SDL::Point(x, y)]);
+			}
+		}
+		return func::Move(result);
+	}
+	Surface TurnLeft()
+	{
+		Surface result=Resized(~Size());
+		for(int y=0; y<result.Size().y; ++y)
+		{
+			for(int x=0; x<result.Size().x; ++x)
+			{
+				result.Draw(SDL::Point(x, y), (*this)[SDL::Point(result.Size().y-y-1, x)]);
+			}
+		}
+		return func::Move(result);
+	}
 	void SaveAsBMP(const std::string& file)
 	{
 		Error::IfNegative(SDL_SaveBMP(surface, file.c_str()));
@@ -186,6 +217,12 @@ private:
 				break;
 		}
 	}
+	Color PixelValue(const Point& xy)const
+	{
+		Color result;
+		SDL_GetRGBA(PixelRawValue(xy), surface->format, &result.r, &result.g, &result.b, &result.a);
+		return result;
+	}
 public:
 	std::vector<Color> Palette()const noexcept
 	{
@@ -200,11 +237,13 @@ public:
 	{
 		return surface->format->palette->ncolors;
 	}
+	RefSimulator<Color> operator[](const Point& xy)
+	{
+		return RefSimulator<Color>([&](){return PixelValue(xy);}, [&](Color col){Draw(xy, col);});
+	}
 	Color operator[](const Point& xy)const
 	{
-		Color result;
-		SDL_GetRGBA(PixelRawValue(xy), surface->format, &result.r, &result.g, &result.b, &result.a);
-		return result;
+		return PixelValue(xy);
 	}
 	void Repaint(const Color& col);
 	using DrawBase::Draw;

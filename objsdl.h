@@ -15,6 +15,7 @@
 #include "../mylibraries/colors.h"
 #include "../mylibraries/types.h"
 #include "../mylibraries/nocopy.h"
+#include "../mylibraries/ref_simulator.h"
 
 #include "oldsdl.h"
 
