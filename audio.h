@@ -9,8 +9,7 @@ private:
 	SDL_AudioSpec data;
 public:
 	using CallbackType=void(*)(void*, uint8*, int);
-
-	Audio(int frequency, Format fmt, uint8 channels, uint16 samples, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
+	Audio(int frequency=48000, Format fmt=Format::U8, uint8 channels=1, uint16 samples=4096, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
 	{
 		data.freq=frequency;
 		data.format=SDL_AudioFormat(fmt);
