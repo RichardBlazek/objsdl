@@ -74,7 +74,7 @@ public:
 		None=0, Frequency=SDL_AUDIO_ALLOW_FREQUENCY_CHANGE, Format=SDL_AUDIO_ALLOW_FORMAT_CHANGE,
 		Channels=SDL_AUDIO_ALLOW_CHANNELS_CHANGE, Any=SDL_AUDIO_ALLOW_ANY_CHANGE
 	};
-	std::tuple<Audio, std::vector<uint8>> LoadWAV(const std::string& file);
+	std::tuple<Audio, std::vector<uint8>> LoadWAV(const std::string& file)const;
 	static uint32 CountOfDrivers()
 	{
 		return SDL_GetNumAudioDrivers();
@@ -98,12 +98,12 @@ public:
 		SDL_MixAudioFormat(dst, src, SDL_AudioFormat(format), len, volume);
 	}
 };
-std::tuple<Audio, std::vector<uint8>> Audio::LoadWAV(const std::string& file)
+std::tuple<Audio, std::vector<uint8>> Audio::LoadWAV(const std::string& file)const
 {
-	Audio result(*this);
 	uint8* tmp_buf;
 	uint32 tmp_len;
-	result.data=*Error::IfZero(SDL_LoadWAV(file.c_str(), &data, &tmp_buf, &tmp_len));
+	Audio result(*this);
+	result.data=*Error::IfZero(SDL_LoadWAV(file.c_str(), &result.data, &tmp_buf, &tmp_len));
 	std::vector<uint8> buffer(tmp_buf, tmp_buf+tmp_len);
 	SDL_FreeWAV(tmp_buf);
 	return std::make_tuple(func::Move(result), buffer);
