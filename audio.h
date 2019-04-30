@@ -2,13 +2,13 @@
 
 class Audio
 {
-public:
-	friend class AudioDevice;
-#include "audio\format.h"
 private:
+	using CallbackType=void(*)(void*, uint8*, int);
 	SDL_AudioSpec data;
 public:
-	using CallbackType=void(*)(void*, uint8*, int);
+#include "audio\format.h"
+	friend class AudioDevice;
+
 	Audio(int frequency=48000, Format fmt=Format::U8, uint8 channels=1, uint16 samples=4096, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
 	{
 		data.freq=frequency;
@@ -34,21 +34,21 @@ public:
 	{
 		data.samples=samples;
 	}
-	void SetCallback(CallbackType callback)
+	void SetCallback(CallbackType callback)noexcept
 	{
 		data.callback=callback;
 	}
 	template<typename T>
-	void SetUserdata(T* userdata)
+	void SetUserdata(T* userdata)noexcept
 	{
 		data.userdata=userdata;
 	}
 	template<typename T>
-	const T* GetUserdata()const
+	const T* GetUserdata()const noexcept
 	{
 		return (T*)data.userdata;
 	}
-	CallbackType GetCallback()const
+	CallbackType GetCallback()const noexcept
 	{
 		return data.callback;
 	}
@@ -103,6 +103,8 @@ std::tuple<Audio, std::vector<uint8>> Audio::LoadWAV(const std::string& file)con
 	uint32 tmp_len;
 	Audio result(*this);
 	result.data=*Error::IfZero(SDL_LoadWAV(file.c_str(), &result.data, &tmp_buf, &tmp_len));
+	result.data.userdata=data.userdata;
+	result.data.callback=data.callback;
 	std::vector<uint8> buffer(tmp_buf, tmp_buf+tmp_len);
 	SDL_FreeWAV(tmp_buf);
 	return std::make_tuple(func::Move(result), buffer);
