@@ -1,12 +1,10 @@
 #pragma once
 
-///SDL-Error
 class Error: public std::exception
 {
 private:
     std::string message;
 public:
-	///Constructor
     Error()noexcept:message(SDL_GetError())
     {
         SDL_ClearError();

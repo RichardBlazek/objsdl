@@ -196,7 +196,7 @@ public:
 	events::Type Type()const noexcept
 	{
 		auto tmp=event.type;
-		tmp=(tmp>=SDL_USEREVENT)?SDL_USEREVENT:tmp;
+		tmp=(tmp>=(uint32)SDL_USEREVENT)?(uint32)SDL_USEREVENT:tmp;
 		return events::Type(tmp==SDL_WINDOWEVENT?0x201+event.window.event:tmp);
 	}
 	uint32 Timestamp()const noexcept

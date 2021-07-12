@@ -8,7 +8,7 @@ namespace events
 	private:
 		Optional<Event> event;
 	public:
-		Iterator()=default;
+		constexpr Iterator():event(){}
 		friend Handler;
 		bool operator==(const Iterator& second)const noexcept
 		{
@@ -18,16 +18,18 @@ namespace events
 		{
 			return bool(event)!=bool(second.event);
 		}
-		void operator++()
+		Iterator& operator++()
 		{
 			if(!SDL_PollEvent(event?&event.Value().event:nullptr))
 			{
 				event.Clear();
 			}
+			return *this;
 		}
-		void operator++(int)
+		Iterator& operator++(int)
 		{
 			++*this;
+			return *this;
 		}
 		Event& operator*()
 		{

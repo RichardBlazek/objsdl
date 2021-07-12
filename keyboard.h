@@ -3,11 +3,11 @@
 class KeyboardState
 {
 private:
-	const uint8* keys;
 	int size;
+	const uint8* keys;
 public:
 	KeyboardState()noexcept
-		:keys(SDL_GetKeyboardState(&size)) {}
+		:size(), keys(SDL_GetKeyboardState(&size)) {}
 	bool IsPressed(Scancode value)const
 	{
 		if(int(value)>size)

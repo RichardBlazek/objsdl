@@ -9,7 +9,7 @@ public:
 #include "audio\format.h"
 	friend class AudioDevice;
 
-	Audio(int frequency=48000, Format fmt=Format::U8, uint8 channels=1, uint16 samples=4096, CallbackType callback=nullptr, void* userdata=nullptr)noexcept
+	Audio(int frequency=48000, Format fmt=Format::U8, uint8 channels=1, uint16 samples=4096, CallbackType callback=nullptr, void* userdata=nullptr)noexcept:data()
 	{
 		data.freq=frequency;
 		data.format=SDL_AudioFormat(fmt);

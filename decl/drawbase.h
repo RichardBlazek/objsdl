@@ -9,6 +9,7 @@ public:
 	virtual void Draw(const Rect& rectangle, const Color& col)=0;
 	virtual void DrawBorder(const Rect& rectangle, const Color& col)=0;
 	virtual void Repaint(const Color& col)=0;
+	virtual ~DrawBase(){}
 	//Draw Circle---------------------------------------------------------------
 	void DrawBorder(const Circle& circle, const Color& color)
 	{
@@ -22,18 +23,10 @@ public:
 	}
 	void Draw(const Circle& circle, const Color& color)
 	{
-		for(int32 row=0; row<=circle.radius; ++row)
+		for(int32 y=-circle.radius; y<=circle.radius; ++y)
 		{
-			for(int32 col=0; col<=circle.radius; ++col)
-			{
-				if(geometry::coordinates::Polar<double, double>(Point(col, row)).lenght<=circle.radius)
-				{
-					Draw(circle.center+Point( col, row), color);
-					Draw(circle.center+Point( col,-row), color);
-					Draw(circle.center+Point(-col, row), color);
-					Draw(circle.center+Point(-col,-row), color);
-				}
-			}
+			int32 width=sqrt(circle.radius*circle.radius-y*y);
+			Draw(Rect(circle.center.x-width, circle.center.y+y, 2*width, 1), color);
 		}
 	}
 	//Draw text-----------------------------------------------------------------
